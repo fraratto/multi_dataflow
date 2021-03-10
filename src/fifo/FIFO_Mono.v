@@ -28,10 +28,10 @@ input ck,
 input reset,
 input read,
 input write,
-input [WIDTH-1:0] input_dati,
+input [WIDTH-1:0] datain,
 output reg full,
 output reg empty,
-output reg [WIDTH-1:0] output_dati
+output reg [WIDTH-1:0] dataout
 );
 
 parameter ADDR_WIDTH=$clog2(DEPTH);
@@ -61,12 +61,12 @@ else
 always@(posedge ck) //assegnato mem
 if(full==0)
 	if(write)
-		mem_ram[Wp] = input_dati;
+		mem_ram[Wp] = datain;
 
 always@(posedge ck) //assegnato mem
 if(empty==0)
 	if(read) 
-		output_dati = mem_ram[Rp];
+		dataout = mem_ram[Rp];
 
 always@(write,full,Wp) //assegnato Wp_nxt
 	if(full) 
