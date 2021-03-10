@@ -19,10 +19,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 //FIFO PARAMETRIZZATA
+//FIFO CON PICK
 
-module FIFO_Mono_PAR#(
-    parameter WIDTH = 32,
-    parameter DEPTH = 64
+module FIFO_Mono_PAR_PICK#(
+    parameter WIDTH = 8,
+    parameter DEPTH = 8
 )(
 input ck,
 input reset,
@@ -64,9 +65,10 @@ if(full==0)
 		mem_ram[Wp] = datain;
 
 always@(posedge ck) //assegnato mem
-if(empty==0)
-	if(read) 
-		dataout = mem_ram[Rp];
+if((empty==1 & write==1) | (empty==0 & read==1))
+        dataout = mem_ram[Rpnxt];
+else
+        dataout = mem_ram[Rp];
 
 always@(write,full,Wp) //assegnato Wp_nxt
 	if(full) 
