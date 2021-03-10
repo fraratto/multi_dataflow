@@ -36,6 +36,7 @@ output reg in1_read,
 output reg wr,
 output reg [WIDTH-1:0] out_data);
 
+
 //PRIORITA'
 reg tag;
 
