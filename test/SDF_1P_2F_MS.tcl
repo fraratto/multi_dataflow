@@ -1,8 +1,8 @@
 #Lo script va lanciato dalla cartella multi_dataflow
 
 #set variables
-set prj_dir "./prj_dir"
 set prj_name "sdf_1p_2f_ms"
+set prj_dir "./prj_dir/$prj_name"
 set partname "xc7a50tcsg324-2"
 
 #create project
@@ -19,7 +19,7 @@ update_compile_order -fileset sim_1
 
 #run simulation
 launch_simulation
-source $prj_dir/$prj_name .sim/sim_1/behav/xsim/tb_SDF_1P_2F_MS.tcl
+source "$prj_dir/$prj_name.sim/sim_1/behav/xsim/tb_SDF_1P_2F_MS.tcl"
 close_sim
 
 #close project
