@@ -15,8 +15,8 @@ Tagged dataflow based accelerators.
 ```
 
 ## Naming convention
-  * **actors**: <type>_<n_ports>P_<n_fluxes>F   (type can be SDF, CSDF or DDF);
-  * **fifo**: FIFO_<type>(_PICK)    (type can be Mono, MS or SR);
+  * **actors**: ```<type>_<n_ports>P_<n_fluxes>F  ```   (type can be SDF, CSDF or DDF);
+  * **fifo**: ```FIFO_<type>(_PICK)  ```    (type can be Mono, MS or SR);
 
 ## How to run a test
   1. Open Vivado
