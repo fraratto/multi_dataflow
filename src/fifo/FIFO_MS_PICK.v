@@ -155,10 +155,11 @@ always@(*) //wr,rd[i],WnR[i],datain[WIDTH-1:WIDTH-1-(TAG_WIDTH-1)],i, full[i], e
 for(i=0;i<=FLUX-1;i=i+1)
 if((wr==1 & full[i]==0 & datain[WIDTH-1:WIDTH-1-(TAG_WIDTH-1)]==i) & rd[i]==0) 
 	WnRnxt[i]=1;
-else if(wr==0 & rd[i]==1 & empty[i]==0 ) //criticità da controllare, forse da eliminare il datain di questa riga
+else if((wr==0 | wr==1 & datain[WIDTH-1:WIDTH-1-(TAG_WIDTH-1)]!=i) & rd[i]==1 & empty[i]==0) 
 	WnRnxt[i]=0;
 else 
 	WnRnxt[i]=WnR[i];
+	
 always@ (*) //Wp[i],Rp[i],WnR[i],i
 for(i=0;i<=FLUX-1;i=i+1)
 if(Wp[i]==Rp[i])
