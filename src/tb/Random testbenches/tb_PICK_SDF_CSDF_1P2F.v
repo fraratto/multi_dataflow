@@ -45,7 +45,7 @@ module tb_PICK_SDF_CSDF_1P2F;
 	); */   
 
 //FIFO -> SDF	
-	wrap_SDF_1P_2F_MS_PICK #(
+/*	wrap_SDF_1P_2F_MS_PICK #(
 		.WIDTH(WIDTH)
 	) dut2 (
 		.clk(clk), 
@@ -58,7 +58,7 @@ module tb_PICK_SDF_CSDF_1P2F;
 		.out_port_write(out_port_write),
 		.out_port_dataout(out_port_dataout),
 		.out_port_full(out_port_full)
-	); 
+	); */ 
 
 	// clock gen
 	always #(CLK_PERIOD/2) clk = ~clk;

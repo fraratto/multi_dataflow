@@ -21,7 +21,7 @@
 //FIFO PARAMETRIZZATA
 //FIFO CON PICK
 
-module FIFO_Mono_PAR_PICK#(
+module FIFO_Mono_PICK#(
     parameter WIDTH = 8,
     parameter DEPTH = 8
 )(

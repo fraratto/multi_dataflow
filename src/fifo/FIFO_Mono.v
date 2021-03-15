@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //FIFO PARAMETRIZZATA
 
-module FIFO_Mono_PAR#(
+module FIFO_Mono#(
     parameter WIDTH = 32,
     parameter DEPTH = 64
 )(

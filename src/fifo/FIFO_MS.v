@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module FIFO_MS_PAR#(
+module FIFO_MS#(
     parameter WIDTH = 8,
     parameter DEPTH = 4, //PROFONDITA' DI OGNI FLUSSO 
     parameter FLUX = 2

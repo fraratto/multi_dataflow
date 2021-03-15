@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
  
-module FIFO_SR_PAR#(
+module FIFO_SR#(
     parameter WIDTH = 8, //WIDTH E' LA DIMENSIONE COMPLESSIVA (DUNQUE NEL CONTEGGIO WIDTH BISOGNA CONTARE TOT BIT PER IL TAG)
     parameter DEPTH = 8,
     parameter FLUX = 2

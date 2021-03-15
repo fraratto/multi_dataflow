@@ -32,7 +32,7 @@ module tb_PICK_DDF_1P2F;
     wire [FLUX-1:0] in_port_full_nda;
     
 //FIFO - FIFO -> DDF
-	wrap_DDF_1P_2F_MS_PICK #(
+/*	wrap_DDF_1P_2F_MS_PICK #(
 		.WIDTH(WIDTH),
 		.WIDTH_NDA(WIDTH_NDA)
 	) dut (
@@ -52,7 +52,7 @@ module tb_PICK_DDF_1P2F;
 		.out_port_write(out_port_write),
 		.out_port_dataout(out_port_dataout),
 		.out_port_full(out_port_full)
-	); 
+	); */ 
 
 	// clock gen
 	always #(CLK_PERIOD/2) clk = ~clk;

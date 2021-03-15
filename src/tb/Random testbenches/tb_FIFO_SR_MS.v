@@ -20,20 +20,24 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Simulazione_FIFO_Mono;
+module Simulazione_FIFO;
 reg [7:0] datain;
 reg write;
 reg ck;
 reg reset;
-wire full;
-wire empty;
+wire [1:0] full;
+wire [1:0] empty;
 wire [7:0] dataout;
-reg read;
 
-//.nomenelmodulo(nomeneltestbench)
-//FIFO_Mono_PAR_PICK dut(.ck(ck),.reset(reset),.read(read),.write(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+reg [1:0] read;
 
-//FIFO_Mono_PAR dut(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+//FIFO_MS dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+
+//FIFO_MS_PICK dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+
+//FIFO_SR dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+
+//FIFO_SR_PICK dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
 //OTTIMIZZATO PER 8 LOCAZIONI, 8 DATI
 
@@ -50,14 +54,14 @@ write=0;
 #10 datain={1'b1,7'd3};
 #10 datain={1'b1,7'd4};
 #10 datain={1'b0,7'd2};
-#10 datain={1'b0,7'd3};
+#10 datain={1'b0,7'd3}; write=0;
 #10 datain={1'b0,7'd2};
 #10 datain={1'b1,7'd7};//FULL
 #10 datain={1'b0,7'd2};
 #10 datain={1'b1,7'd7};
 #10 datain={1'b0,7'd5};write=0;
 #20 datain={1'b0,7'd4};read=1;
-#10 datain={1'b0,7'd5};read=1;
+#10 datain={1'b0,7'd5};read=2;
 #10 datain={1'b1,7'd5};read=0;
 #10 datain={1'b1,7'd6};
 #10 datain={1'b1,7'd7};write=1;
@@ -70,7 +74,7 @@ write=0;
 #10 datain={1'b1,7'd9};
 #10 datain={1'b1,7'd10};
 #10 datain={1'b1,7'd10};
-#10 datain={1'b1,7'd11};read=1;
+#10 datain={1'b1,7'd11};read=2;
 #10 datain={1'b0,7'd11};
 #10 datain={1'b0,7'd12};
 #10 datain={1'b0,7'd13};
@@ -80,29 +84,23 @@ write=0;
 #10 datain={1'b1,7'd13};
 #10 datain={1'b1,7'd14};read=1;write=1;
 #10 datain={1'b0,7'd15};
-#10 datain={1'b1,7'd14};
+#10 datain={1'b1,7'd14};read=2;
 #10 datain={1'b0,7'd15};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd16};
 #10 datain={1'b1,7'd14};read=0;
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd17};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd18};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd19};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd13};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
-#10 datain={1'b1,7'd14};write=0;
-#10 datain={1'b0,7'd15};
-#10 datain={1'b1,7'd14};read=1;write=1;
-#10 datain={1'b0,7'd15};
+#10 datain={1'b0,7'd16};
 #10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
-#10 datain={1'b1,7'd14};
-#10 datain={1'b0,7'd15};
-#10 datain={1'b1,7'd14};write=0;
+#10 datain={1'b0,7'd19};write=0;
+#50 read=2;
 #90 read=1;
 #90 read=0;
 #20 $stop;
@@ -112,3 +110,4 @@ always
 #5 ck=~ck;
 
 endmodule
+
