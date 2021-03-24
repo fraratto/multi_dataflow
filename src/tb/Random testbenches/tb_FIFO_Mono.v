@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Simulazione_FIFO_Mono;
+module tb_FIFO_Mono;
 reg [7:0] datain;
 reg write;
 reg ck;
@@ -32,9 +32,9 @@ reg read;
 
 //.nomenelmodulo(nomeneltestbench)
 
-//FIFO_Mono_PICK dut(.ck(ck),.reset(reset),.read(read),.write(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+FIFO_Mono_PICK dut1(.ck(ck),.reset(reset),.read(read),.write(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
-//FIFO_Mono dut(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+FIFO_Mono dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
 //OTTIMIZZATO PER 8 LOCAZIONI, 8 DATI
 

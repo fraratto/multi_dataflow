@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Simulazione_FIFO;
+module tb_FIFO;
 reg [7:0] datain;
 reg write;
 reg ck;
@@ -31,13 +31,15 @@ wire [7:0] dataout;
 
 reg [1:0] read;
 
-//FIFO_MS dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+FIFO_MS dut1(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
-//FIFO_MS_PICK dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+PICK_FIFO_MS dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
-//FIFO_SR dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+FIFO_SR dut3(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
-//FIFO_SR_PICK dut2(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+Prova_oldFIFOSR_nolatch dut4(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
+
+PICK_FIFO_SR dut5(.ck(ck),.rst(reset),.rd(read),.wr(write),.datain(datain),.full(full),.empty(empty),.dataout(dataout));
 
 //OTTIMIZZATO PER 8 LOCAZIONI, 8 DATI
 
