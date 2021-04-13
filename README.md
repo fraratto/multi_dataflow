@@ -12,6 +12,9 @@ Tagged dataflow based accelerators.
 │     └─── wrappers: contains simple modules, e.g. fifo+actor;
 │
 └─── test:  contains .tcl files to create projects and run tests 
+│
+└─── sv_develop:  system-verilog files to tidy up
+
 ```
 
 ## Naming convention
