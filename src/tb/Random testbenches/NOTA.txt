@@ -1,1 +1,0 @@
-I wrappers di questi testbench sono sulla cartella "wrappers"

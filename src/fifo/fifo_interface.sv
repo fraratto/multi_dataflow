@@ -3,12 +3,12 @@
 `ifndef FIFO_INTERFACE
 `define FIFO_INTERFACE
 
-	interface read_interface #(DATA_WIDTH = 8, FLUX = 2, PORTS = 2)
+	interface read_interface #(DATA_WIDTH = 8, FLUX = 2)
 							(input clk);
         parameter WIDTH = DATA_WIDTH+$clog2(FLUX); 							
-		logic [(WIDTH*PORTS)-1 : 0] dout;
-		logic [(FLUX*PORTS)-1:0] read;
-		logic [(FLUX*PORTS)-1:0] empty;
+		logic [(WIDTH)-1 : 0] dout;
+		logic [(FLUX)-1:0] read;
+		logic [(FLUX)-1:0] empty;
 		
 		modport fifo(input read, output dout, empty);
 		modport actor(output read, input dout, empty);
@@ -36,12 +36,12 @@
 
 
 
-	interface write_interface #(DATA_WIDTH = 8, FLUX = 2, PORTS = 2)
+	interface write_interface #(DATA_WIDTH = 8, FLUX = 2)
 							(input clk);
         parameter WIDTH = DATA_WIDTH+$clog2(FLUX); 
-		logic [(WIDTH*PORTS)-1 : 0] din;
+		logic [(WIDTH)-1 : 0] din;
 		logic write;
-		logic [(FLUX*PORTS)-1:0] full;
+		logic [(FLUX)-1:0] full;
 		
 		modport fifo(input din, write, output full);
 		modport actor(output din, write, input full);
