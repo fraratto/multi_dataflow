@@ -1,32 +1,32 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
-module delayer#
+//TESTBENCHED; EVERYTHING'S OK
+
+module clipper#
 (
-    DATA_WIDTH=8,
-    FLUX=2                   
-)(
-    input clk,
-    input rst,        
+    FLUX=2                  
+)(        
     write_interface.actor write_port,
     read_interface.actor read_port    
 );
  
     //local parameters
-    parameter TAG_WIDTH = $clog2(FLUX);
-    parameter WIDTH=DATA_WIDTH+TAG_WIDTH;    
-
+    parameter DATA_WIDTH_CLIP=16;
+    parameter DATA_WIDTH=8;
+    parameter TAG_WIDTH = $clog2(FLUX);   
+    parameter WIDTH=DATA_WIDTH+TAG_WIDTH;
+    parameter WIDTH_CLIP=DATA_WIDTH_CLIP+TAG_WIDTH;     
+    
     //common combinatory elements
-    logic eqv_read;                                     //read signal
-    logic [WIDTH-1:0] data_nxt;                         //next data to be stored
-    logic [WIDTH-1:0] data [0:FLUX-1];                  //data stored
-    logic en_data;                                      //enable for storing data
+    logic eqv_read;                                     //read signal                        
+    logic signed [WIDTH_CLIP-(TAG_WIDTH)-1:0] op_A;     //operator for data evaluation
     
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
 
     //loops
-    integer i,j;
+    integer i;                                          //needed for loops
     
     //combinatory logic/elaboration of data 
     always_comb
@@ -49,24 +49,28 @@ module delayer#
                         end
                 end                      
                                                      
-            //write, output data, data memory, data operation and read authorizations
+            //operations
                 
-                //the last operation is available  
+                //operation is available  
                 if(write_port.full==0 & read_port.empty[tag]==0)    
                     begin
                         eqv_read=1;
                         write_port.write=1;
-                        data_nxt=read_port.dout;
-                        write_port.din=data[tag];
-                        en_data=1;
-                    end                  
+                        op_A=read_port.dout[WIDTH_CLIP-(TAG_WIDTH)-1:0];
+                            if(op_A>255)
+                                write_port.din={tag,255};
+                            else if(op_A<0)
+                                write_port.din={tag,0};
+                            else
+                                write_port.din={tag,op_A[WIDTH-(TAG_WIDTH)-1:0]};                        
+                    end
+                //operation is not available                      
                 else  
                     begin
                         eqv_read=0;
                         write_port.write=0;
-                        data_nxt=data[tag];
-                        write_port.din='x;
-                        en_data=0; 
+                        op_A='x; 
+                        write_port.din='x; 
                     end
 
             //actual read assignments
@@ -79,16 +83,5 @@ module delayer#
                 end 	 
     
         end 
-
-
-    always_ff@(posedge clk)
-        if(rst)
-            begin
-                for(i=0;i<=FLUX-1;i=i+1)                
-                    data[i] <= '0;
-            end
-        else if(en_data)
-                    data[tag] <= data_nxt;    
     
 endmodule
-

@@ -1,11 +1,12 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
-module shifter#
+
+//TESTBENCHED; EVERYTHING'S OK
+
+module delayer#
 (
-    DATA_WIDTH=27,
-    FLUX=2,
-    SHIFT_NUM = 11                   
+    FLUX=2                   
 )(
     input clk,
     input rst,        
@@ -14,17 +15,21 @@ module shifter#
 );
  
     //local parameters
+    parameter DATA_WIDTH=8;
     parameter TAG_WIDTH = $clog2(FLUX);
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;    
 
     //common combinatory elements
-    logic eqv_read;                                     //read signal                        
-
+    logic eqv_read;                                     //read signal
+    logic [WIDTH-1:0] data_nxt;                         //next data to be stored
+    logic [WIDTH-1:0] data [0:FLUX-1];                  //data stored
+    logic en_data;                                      //enable for storing data
+    
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
 
     //loops
-    integer i,j;
+    integer i,k;                                        //needed for loops
     
     //combinatory logic/elaboration of data 
     always_comb
@@ -47,20 +52,25 @@ module shifter#
                         end
                 end                      
                                                      
-            //write, output data, data memory, data operation and read authorizations
+            //operations
                 
-                //the last operation is available  
+                //operation is available  
                 if(write_port.full==0 & read_port.empty[tag]==0)    
                     begin
                         eqv_read=1;
                         write_port.write=1;
-                        write_port.din=read_port.dout>>(SHIFT_NUM);
-                    end                  
+                        data_nxt=read_port.dout;
+                        write_port.din=data[tag];
+                        en_data=1;
+                    end
+                //operation is not available                      
                 else  
                     begin
                         eqv_read=0;
                         write_port.write=0;
+                        data_nxt=data[tag];
                         write_port.din='x; 
+                        en_data=0; 
                     end
 
             //actual read assignments
@@ -73,5 +83,16 @@ module shifter#
                 end 	 
     
         end 
+
+    //data update
+    always_ff@(posedge clk)
+        if(rst)
+            begin
+                for(k=0;k<=FLUX-1;k=k+1)                
+                    data[k] <= '0;
+            end
+        else if(en_data)
+                    data[tag] <= data_nxt;    
     
 endmodule
+

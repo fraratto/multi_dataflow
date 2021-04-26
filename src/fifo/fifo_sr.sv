@@ -39,7 +39,7 @@ module fifo_sr#(
     logic [ADDR_WIDTH-1:0] Rpnxt [0:FLUX-1];            //next read pointer for each flux
             
     //loops
-    integer i;                                          //needed for for loops
+    integer i,k,l,m,n,p,q,r,s,t,u;                      //needed for loops
     genvar j;                                           //needed for output mux 
 
     //output choice function (reader is the name of the function)
@@ -63,17 +63,17 @@ module fifo_sr#(
         if(rst)
             begin
                 Wp<=0;
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(k=0;k<=FLUX-1;k=k+1)
                     begin
-                        Rp[i]<=0;
+                        Rp[k]<=0;
                     end
             end
         else
             begin
                 Wp<=Wpnxt;
-                    for(i=0;i<=FLUX-1;i=i+1)
+                    for(k=0;k<=FLUX-1;k=k+1)
                         begin
-                            Rp[i]<=Rpnxt[i];
+                            Rp[k]<=Rpnxt[k];
                         end
             end            
 
@@ -81,31 +81,31 @@ module fifo_sr#(
     always_ff@(posedge clk)
         if(rst)
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
-                        lastwrite[i]<=0;
+                for(l=0;l<=FLUX-1;l=l+1)
+                        lastwrite[l]<=0;
             end                                 
         else if(write_port.write==1)  
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
-                    if(tag==i)                 
-                        lastwrite[i]<=Wp;                
+                for(l=0;l<=FLUX-1;l=l+1)
+                    if(tag==l)                 
+                        lastwrite[l]<=Wp;                
             end
 
     //signals' update - statusreg
     always_ff@(posedge clk)
         if(rst)
             begin
-                for(i=0;i<=DEPTH-1;i=i+1)
-                        statusreg[i]<=0;
+                for(m=0;m<=DEPTH-1;m=m+1)
+                        statusreg[m]<=0;
             end
         else if(write_port.write==1 | |read_port.read==1)
             begin
                 if(write_port.write==1)
                     statusreg[Wp]<=1;                
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(m=0;m<=FLUX-1;m=m+1)
                     begin
-                        if(read_port.read[i]==1) 
-                            statusreg[Rp[i]]<=0;
+                        if(read_port.read[m]==1) 
+                            statusreg[Rp[m]]<=0;
                     end
             end                                                                                                                    
 
@@ -114,50 +114,53 @@ module fifo_sr#(
     always_ff@(posedge clk)
         if(rst)
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
-                        Rpstory[i]<=0;
+                for(n=0;n<=FLUX-1;n=n+1)
+                        Rpstory[n]<=0;
             end                                 
-
         else if(write_port.write==1 | |read_port.read==1) 
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(n=0;n<=FLUX-1;n=n+1)
                     begin
-                        if(write_port.write & tag==i)                  
-                            Rpstory[i]<=Rpstory[i]+1;
-                        if(read_port.read[i]==1) 
-                            Rpstory[i]<=Rpstory[i]-1;
+                        if(write_port.write & tag==n)
+                            begin                  
+                                Rpstory[n]=Rpstory[n]+1;
+                            end
+                        if(read_port.read[n]==1)
+                            begin 
+                                Rpstory[n]=Rpstory[n]-1;
+                            end    
                     end                                                        
             end
 
     //writing procedure
     always_ff@(posedge clk)
         if(write_port.write==1) 
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(p=0;p<=FLUX-1;p=p+1)
                     begin
-                        if(tag==i) 
+                        if(tag==p) 
                             begin
                                 mem_ram[Wp]<=write_port.din;
-                                if(Rpstory[i]!=0) 
+                                if(Rpstory[p]!=0) 
                                     begin
-                                        ram_nxt[lastwrite[i]]<=Wp;
+                                        ram_nxt[lastwrite[p]]<=Wp;
                                     end
                             end
                     end       
 
     //reading procedure
     for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = mem_ram[Rp[j]][j];               
+        assign exits[j] = mem_ram[Rp[j]];               
 
     //empty locations detector
     always_comb   
         if(&statusreg)  
             nextloc = Wp;
         else
-            for(i=DEPTH-1; i>=0; i=i-1)
+            for(q=DEPTH-1; q>=0; q=q-1)
                 begin
-                    if(statusreg[i]==0 && Wp!=i)
+                    if(statusreg[q]==0 && Wp!=q)
                         begin
-                            nextloc = i;
+                            nextloc = q;
                             break;
                         end
                     else 
@@ -168,19 +171,19 @@ module fifo_sr#(
     always_comb
         begin
             Rptot=0;
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(r=0;r<=FLUX-1;r=r+1)
                     begin
-                        Rptot=Rptot+Rpstory[i];
+                        Rptot=Rptot+Rpstory[r];
                     end
         end
 
 
     //next write pointer updates
     always_comb    
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(s=0;s<=FLUX-1;s=s+1)
             begin
-                if(read_port.read[i]==1 & (Rptot==DEPTH | (Rptot==DEPTH-1 & write_port.write==1) ) )  
-                   Wpnxt=Rp[i];
+                if(read_port.read[s]==1 & (Rptot==DEPTH | (Rptot==DEPTH-1 & write_port.write==1) ) )  
+                   Wpnxt=Rp[s];
                 else if(Rptot<DEPTH-1 & write_port.write==1)  
                    Wpnxt=nextloc;
                 else 
@@ -189,14 +192,14 @@ module fifo_sr#(
 
     //next read pointers updates
     always_comb 
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(t=0;t<=FLUX-1;t=t+1)
             begin
-                if(write_port.write==1 & tag==i & (Rpstory[i]==0 | (Rpstory[i]==1 & read_port.read==1) ) )   
-                   Rpnxt[i]=Wp;
-                else if(Rpstory[i]>1 & read_port.read[i]==1)  
-                   Rpnxt[i]=ram_nxt[Rp[i]];
+                if(write_port.write==1 & tag==t & (Rpstory[t]==0 | (Rpstory[t]==1 & read_port.read[t]==1) ) )   
+                   Rpnxt[t]=Wp;
+                else if(Rpstory[t]>1 & read_port.read[t]==1)  
+                   Rpnxt[t]=ram_nxt[Rp[t]];
                 else 
-                   Rpnxt[i]=Rp[i];
+                   Rpnxt[t]=Rp[t];
             end
 
     //full/empty update
@@ -207,12 +210,12 @@ module fifo_sr#(
             else 
                 write_port.full=0;
                             
-            for(i=0;i<=FLUX-1;i=i+1)
+            for(u=0;u<=FLUX-1;u=u+1)
                 begin
-                    if(Rpstory[i]==0) 
-                       read_port.empty[i]=1;
+                    if(Rpstory[u]==0) 
+                       read_port.empty[u]=1;
                     else 
-                       read_port.empty[i]=0;
+                       read_port.empty[u]=0;
                 end        
         end
 
