@@ -34,7 +34,7 @@ module fifo_ms#(
     logic [ADDR_WIDTH-1:0] Rpnxt [0:FLUX-1];            //next read pointer for each flux
     
     //loops
-    integer i;                                          //needed for for loops
+    integer i,k,l,m,n,p,q;                              //needed for for loops
     genvar j;                                           //needed for output mux 
     
     //output choice function (reader is the name of the function)
@@ -55,27 +55,27 @@ module fifo_ms#(
     //pointers' and WnR update
     always_ff@(posedge clk)
         if(rst) 
-            for(i=0;i<=FLUX-1;i=i+1)
+            for(k=0;k<=FLUX-1;k=k+1)
                 begin
-                    Wp[i]<=0;
-                    Rp[i]<=0;
-                    WnR[i]<=0;
+                    Wp[k]<=0;
+                    Rp[k]<=0;
+                    WnR[k]<=0;
                 end
         else
-            for(i=0;i<=FLUX-1;i=i+1)
+            for(k=0;k<=FLUX-1;k=k+1)
                 begin
-                    Rp[i]<=Rpnxt[i]; 
-                    Wp[i]<=Wpnxt[i]; 
-                    WnR[i]<=WnRnxt[i]; 
+                    Rp[k]<=Rpnxt[k]; 
+                    Wp[k]<=Wpnxt[k]; 
+                    WnR[k]<=WnRnxt[k]; 
                 end
         
     //writing procedure
     always_ff@(posedge clk) 
         if(write_port.write==1)
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(l=0;l<=FLUX-1;l=l+1)
                     begin
-                        if(tag==i) 
-                            mem_ram[Wp[i]][i] <= write_port.din;
+                        if(tag==l) 
+                            mem_ram[Wp[l]][l] <= write_port.din;
                     end
                 
     //reading procedure
@@ -84,55 +84,55 @@ module fifo_ms#(
         
     //next write pointer updates
     always_comb
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(m=0;m<=FLUX-1;m=m+1)
             begin
-                if(write_port.write==1 & tag==i)  
-                    Wpnxt[i]=Wp[i]+1;
+                if(write_port.write==1 & tag==m)  
+                    Wpnxt[m]=Wp[m]+1;
                 else 
-                    Wpnxt[i]=Wp[i];
+                    Wpnxt[m]=Wp[m];
             end
         
     //next read pointers updates
     always_comb
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(n=0;n<=FLUX-1;n=n+1)
             begin
-                if(read_port.read[i]==1) 
-                    Rpnxt[i]=Rp[i]+1;
+                if(read_port.read[n]==1) 
+                    Rpnxt[n]=Rp[n]+1;
                 else  
-                    Rpnxt[i]=Rp[i];
+                    Rpnxt[n]=Rp[n];
             end
         
     //next WnR updates
     always_comb
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(p=0;p<=FLUX-1;p=p+1)
             begin
-                if(write_port.write==1 & tag==i & read_port.read[i]==0)  
-                    WnRnxt[i]=1;
-                else if(read_port.read[i]==1 & ( write_port.write==0 | (write_port.write==1 & tag!=i) ) ) 
-                    WnRnxt[i]=0;
+                if(write_port.write==1 & tag==p & read_port.read[p]==0)  
+                    WnRnxt[p]=1;
+                else if(read_port.read[p]==1 & ( write_port.write==0 | (write_port.write==p & tag!=p) ) ) 
+                    WnRnxt[p]=0;
                 else 
-                    WnRnxt[i]=WnR[i];
+                    WnRnxt[p]=WnR[p];
             end
     
     //full/empty update    
     always_comb 
-        for(i=0;i<=FLUX-1;i=i+1)
+        for(q=0;q<=FLUX-1;q=q+1)
             begin
-                if(Wp[i]==Rp[i])
-                    if(WnR[i]) 
+                if(Wp[q]==Rp[q])
+                    if(WnR[q]) 
                         begin 
-                            write_port.full[i]=1; 
-                            read_port.empty[i]=0; 
+                            write_port.full[q]=1; 
+                            read_port.empty[q]=0; 
                         end
                     else
                         begin
-                            write_port.full[i]=0;
-                            read_port.empty[i]=1; 
+                            write_port.full[q]=0;
+                            read_port.empty[q]=1; 
                         end
                 else
                     begin
-                        read_port.empty[i]=0; 
-                        write_port.full[i]=0; 
+                        read_port.empty[q]=0; 
+                        write_port.full[q]=0; 
                     end
             end
 endmodule

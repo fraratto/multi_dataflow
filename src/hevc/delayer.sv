@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
-
 //TESTBENCHED; EVERYTHING'S OK
 
 module delayer#
@@ -36,21 +35,15 @@ module delayer#
         
         begin
                  
-            //choice about which data flux will be elaborated by the actor             
-            i=FLUX-1;
-            while(i>=1)
-                begin
-                    if(read_port.empty[i]==0 & write_port.full==0) 
-                        begin
-                            tag=i; 
-                            i=0;
-                        end
-                    else
-                        begin
-                            tag=i-1; 
-                            i=i-1;
-                        end
-                end                      
+            //choice about which data flux will be elaborated by the actor                            
+            for(i=0;i<=FLUX-1;i=i+1)
+                if(read_port.empty[i]==0 & write_port.full==0) 
+                    begin
+                        tag=i; 
+                        break;
+                    end
+                else
+                    tag=0;                      
                                                      
             //operations
                 
