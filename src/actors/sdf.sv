@@ -6,7 +6,7 @@ module sdf#
     DATA_WIDTH=8,
     FLUX=2,
     PORTS=2,
-    NUM_OP=4                //WARNING: if NUM_OP = 0 the actor will treat this 0 like a 1   
+    NUM_OP=4                   
 )(
     input clk,
     input rst,        
@@ -46,7 +46,7 @@ module sdf#
     logic [WIDTH-(TAG_WIDTH)-1:0] carrier2;             //support operation variable
 
     //loops
-    integer i,j,k;
+    integer i,j,k;                                      //needed for loops
     
     //combinatory logic/elaboration of data 
     always_comb
@@ -64,22 +64,14 @@ module sdf#
                 end
          
             //choice about which data flux will be elaborated by the actor             
-            i=FLUX-1;
-            while(i>=1)
-                begin
-                    if(eqv_empty[i]==0 & write_port.full==0) 
-                        begin
-                            tag=i; 
-                            k=i;
-                            i=0;
-                        end
-                    else
-                        begin
-                            tag=i-1; 
-                            k=i-1;
-                            i=i-1;
-                        end
-                end                      
+            for(i=0;i<=FLUX-1;i=i+1)
+                if(eqv_empty[i]==0 & write_port.full==0) 
+                    begin
+                        tag=i; 
+                        break;
+                    end
+                else
+                    tag=0;                      
     
             //initial common element assignments	   
             eqv_cnt=cnt[tag];
@@ -156,10 +148,10 @@ module sdf#
     always_ff @(posedge clk)
         if(rst==1) 
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(k=0;k<=FLUX-1;k=k+1)
                     begin
-                        cnt[i]<=NUM;
-                        acc[i]<=0;
+                        cnt[k]<=NUM;
+                        acc[k]<=0;
                     end
             end
         else 

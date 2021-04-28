@@ -6,7 +6,7 @@ module csdf#
     DATA_WIDTH=8,
     FLUX=2,
     PORTS=2,
-    NUM_OP=4                //WARNING: if NUM_OP = 0 the actor will treat this 0 like a 1     
+    NUM_OP=4                     
 )(
     input clk,
     input rst,        
@@ -24,7 +24,7 @@ module csdf#
     //local parameters
     parameter TAG_WIDTH = $clog2(FLUX);
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;    
-    parameter NUM=NUM_OP-1;
+    parameter NUM = NUM_OP-1;
     parameter DIM_NUM=$clog2(NUM_OP);
 
     //memories
@@ -49,7 +49,7 @@ module csdf#
     logic [WIDTH-(TAG_WIDTH)-1:0] carrier2;             //support operation variable
 
     //loops
-    integer i,j,k;
+    integer i,j,k;                                      //needed for loops
 
     //combinatory logic/elaboration of data 
     always_comb
@@ -67,27 +67,19 @@ module csdf#
                 end
     
             //choice about which data flux will be elaborated by the actor 
-            i=FLUX-1;
-            while(i>=1)
-                begin
-                    if(
-                      (cnt[i]==0 & write_port.full==0 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available and data can be sended at the first try
-                    | (cnt[i]==0 & write_port.full==1 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available but the data cannot be sended at the first try
-                    | (cnt[i]==0 & write_port.full==0 & ready[i]==1)                    //the last operation has been done and data can be sended
-                    | (cnt[i]!=0 & eqv_empty[i]==0)                                     //the ordinary operation is available
-                        )
-                        begin
-                            tag=i; 
-                            k=i;
-                            i=0;
-                        end
-                    else
-                        begin
-                            tag=i-1; 
-                            k=i-1;
-                            i=i-1;
-                        end
-                end
+            for(i=0;i<=FLUX-1;i=i+1)
+                if(
+                  (cnt[i]==0 & write_port.full==0 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available and data can be sended at the first try
+                | (cnt[i]==0 & write_port.full==1 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available but the data cannot be sended at the first try
+                | (cnt[i]==0 & write_port.full==0 & ready[i]==1)                    //the last operation has been done and data can be sended
+                | (cnt[i]!=0 & eqv_empty[i]==0)                                     //the ordinary operation is available
+                    )
+                    begin
+                        tag=i; 
+                        break;
+                    end
+                else
+                    tag=0;
     
             //initial common element assignments	   
             eqv_cnt=cnt[tag];
@@ -193,11 +185,11 @@ module csdf#
     always_ff @(posedge clk)
         if(rst==1) 
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(k=0;k<=FLUX-1;k=k+1)
                     begin
-                        ready[i]<=0; 
-                        cnt[i]<=NUM;
-                        acc[i]<=0;
+                        ready[k]<=0; 
+                        cnt[k]<=NUM;
+                        acc[k]<=0;
                     end
             end
         else 
