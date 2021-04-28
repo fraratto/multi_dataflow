@@ -20,8 +20,8 @@ module delayer#
 
     //common combinatory elements
     logic eqv_read;                                     //read signal
-    logic [WIDTH-1:0] data_nxt;                         //next data to be stored
-    logic [WIDTH-1:0] data [0:FLUX-1];                  //data stored
+    logic [WIDTH-(TAG_WIDTH)-1:0] data_nxt;                         //next data to be stored
+    logic [WIDTH-(TAG_WIDTH)-1:0] data [0:FLUX-1];                  //data stored
     logic en_data;                                      //enable for storing data
     
     //external combinatory elements
@@ -52,8 +52,8 @@ module delayer#
                     begin
                         eqv_read=1;
                         write_port.write=1;
-                        data_nxt=read_port.dout;
-                        write_port.din=data[tag];
+                        data_nxt=read_port.dout[WIDTH-(TAG_WIDTH)-1:0];
+                        write_port.din={tag,data[tag]};
                         en_data=1;
                     end
                 //operation is not available                      
