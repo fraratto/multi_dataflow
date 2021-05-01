@@ -2,14 +2,15 @@
 `include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
+//NAME OF PORTS AS SCHEMATIC
 
 module adder_18#
 (
     FLUX=2                   
 )(        
-    write_interface.actor write_port,                    //sum
-    read_interface.actor read_port_A,                    //opA
-    read_interface.actor read_port_B                     //opB
+    write_interface.actor write_port_sum,                
+    read_interface.actor read_port_opA,                  
+    read_interface.actor read_port_opB                   
 );
  
     //local parameters
@@ -21,7 +22,7 @@ module adder_18#
     logic eqv_read;                                     //read signal
     logic signed [WIDTH-(TAG_WIDTH)-1:0] op_A;          //operator for port A
     logic signed [WIDTH-(TAG_WIDTH)-1:0] op_B;          //operator for port B
-    logic signed [WIDTH-(TAG_WIDTH)-1:0] sum;           //operator for sum of A and B
+    logic signed [WIDTH-(TAG_WIDTH)-1:0] sum;           //operator for sum of op_A and op_B
     
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
@@ -36,7 +37,7 @@ module adder_18#
                  
             //choice about which data flux will be elaborated by the actor                            
             for(i=0;i<=FLUX-1;i=i+1)
-                if(read_port_A.empty[i]==0 & read_port_B.empty[i]==0 & write_port.full==0) 
+                if(read_port_opA.empty[i]==0 & read_port_opB.empty[i]==0 & write_port_sum.full==0) 
                     begin
                         tag=i; 
                         break;
@@ -47,23 +48,23 @@ module adder_18#
             //write, output data, data memory, data operation and read authorizations
                 
                 //the last operation is available  
-                if(write_port.full==0 & (read_port_A.empty[tag]==0 & read_port_B.empty[tag]==0) )    
+                if(write_port_sum.full==0 & (read_port_opA.empty[tag]==0 & read_port_opB.empty[tag]==0) )    
                     begin
                         eqv_read=1;
-                        write_port.write=1;
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];
-                        op_B=read_port_B.dout[WIDTH-(TAG_WIDTH)-1:0];
+                        write_port_sum.write=1;
+                        op_A=read_port_opA.dout[WIDTH-(TAG_WIDTH)-1:0];
+                        op_B=read_port_opB.dout[WIDTH-(TAG_WIDTH)-1:0];
                         sum=op_A+op_B;
-                        write_port.din={tag,sum};
+                        write_port_sum.din={tag,sum};
                     end                  
                 else  
                     begin
                         eqv_read=0;
                         op_A='x;
                         op_B='x;
-                        write_port.write=0;
+                        write_port_sum.write=0;
                         sum='x;
-                        write_port.din='x; 
+                        write_port_sum.din='x; 
                     end
 
             //actual read assignments
@@ -71,13 +72,13 @@ module adder_18#
                 begin
                     if(i==tag)
                         begin
-                            read_port_A.read[i] = eqv_read;
-                            read_port_B.read[i] = eqv_read;
+                            read_port_opA.read[i] = eqv_read;
+                            read_port_opB.read[i] = eqv_read;
                         end
                     else
                         begin
-                            read_port_A.read[i] = 0;
-                            read_port_B.read[i] = 0;
+                            read_port_opA.read[i] = 0;
+                            read_port_opB.read[i] = 0;
                         end
                 end 	 
     

@@ -2,13 +2,14 @@
 `include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
+//NAME OF PORTS AS SCHEMATIC
 
 module clipper#
 (
     FLUX=2                  
 )(        
-    write_interface.actor write_port,
-    read_interface.actor read_port    
+    write_interface.actor write_port_out_pel,
+    read_interface.actor read_port_in_pel    
 );
  
     //local parameters
@@ -35,7 +36,7 @@ module clipper#
                  
             //choice about which data flux will be elaborated by the actor                            
             for(i=0;i<=FLUX-1;i=i+1)
-                if(read_port.empty[i]==0 & write_port.full==0) 
+                if(read_port_in_pel.empty[i]==0 & write_port_out_pel.full==0) 
                     begin
                         tag=i; 
                         break;
@@ -46,34 +47,34 @@ module clipper#
             //operations
                 
                 //operation is available  
-                if(write_port.full==0 & read_port.empty[tag]==0)    
+                if(write_port_out_pel.full==0 & read_port_in_pel.empty[tag]==0)    
                     begin
                         eqv_read=1;
-                        write_port.write=1;
-                        op_A=read_port.dout[WIDTH_CLIP-(TAG_WIDTH)-1:0];
+                        write_port_out_pel.write=1;
+                        op_A=read_port_in_pel.dout[WIDTH_CLIP-(TAG_WIDTH)-1:0];
                             if(op_A>255)
-                                write_port.din={tag,255};
+                                write_port_out_pel.din={tag,255};
                             else if(op_A<0)
-                                write_port.din={tag,0};
+                                write_port_out_pel.din={tag,0};
                             else
-                                write_port.din={tag,op_A[WIDTH-(TAG_WIDTH)-1:0]};                        
+                                write_port_out_pel.din={tag,op_A[WIDTH-(TAG_WIDTH)-1:0]};                        
                     end
                 //operation is not available                      
                 else  
                     begin
                         eqv_read=0;
-                        write_port.write=0;
+                        write_port_out_pel.write=0;
                         op_A='x; 
-                        write_port.din='x; 
+                        write_port_out_pel.din='x; 
                     end
 
             //actual read assignments
             for(i=0;i<=FLUX-1;i=i+1)
                 begin
                     if(i==tag)
-                        read_port.read[i] = eqv_read;
+                        read_port_in_pel.read[i] = eqv_read;
                     else
-                        read_port.read[i] = 0;
+                        read_port_in_pel.read[i] = 0;
                 end 	 
     
         end 

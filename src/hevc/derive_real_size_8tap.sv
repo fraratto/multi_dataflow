@@ -2,13 +2,14 @@
 `include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
+//NAME OF PORTS AS SCHEMATIC
 
 module derive_real_size_8tap#
 ( 
     FLUX=2                  
 )(        
-    write_interface.actor write_port,                   //real size
-    read_interface.actor read_port                      //ext size
+    write_interface.actor write_port_real_size,                  
+    read_interface.actor read_port_ext_size                      
 );
     //local parameters
     parameter DATA_WIDTH=7;
@@ -21,7 +22,7 @@ module derive_real_size_8tap#
 
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
-    logic [WIDTH-(TAG_WIDTH)-1:0] part;                  //operator for signal
+    logic [WIDTH-(TAG_WIDTH)-1:0] part;                 //operator for signal
     
     //loops
     integer i;                                          //needed for loops
@@ -33,7 +34,7 @@ module derive_real_size_8tap#
                  
             //choice about which data flux will be elaborated by the actor                            
             for(i=0;i<=FLUX-1;i=i+1)
-                if(read_port.empty[i]==0 & write_port.full==0) 
+                if(read_port_ext_size.empty[i]==0 & write_port_real_size.full==0) 
                     begin
                         tag=i; 
                         break;
@@ -44,29 +45,29 @@ module derive_real_size_8tap#
             //write, output data, data memory, data operation and read authorizations
                 
                 //the last operation is available  
-                if(write_port.full==0 & read_port.empty[tag]==0)    
+                if(write_port_real_size.full==0 & read_port_ext_size.empty[tag]==0)    
                     begin
                         eqv_read=1;
-                        write_port.write=1;
-                        part=read_port.dout[WIDTH-(TAG_WIDTH)-1:0];
+                        write_port_real_size.write=1;
+                        part=read_port_ext_size.dout[WIDTH-(TAG_WIDTH)-1:0];
                         part=part-DIFF;
-                        write_port.din={tag,part};
+                        write_port_real_size.din={tag,part};
                     end                  
                 else  
                     begin
                         eqv_read=0;
-                        write_port.write=0;
+                        write_port_real_size.write=0;
                         part='x;
-                        write_port.din='x; 
+                        write_port_real_size.din='x; 
                     end
 
             //actual read assignments
             for(i=0;i<=FLUX-1;i=i+1)
                 begin
                     if(i==tag)
-                        read_port.read[i] = eqv_read;
+                        read_port_ext_size.read[i] = eqv_read;
                     else
-                        read_port.read[i] = 0;
+                        read_port_ext_size.read[i] = 0;
                 end 	 
     
         end 

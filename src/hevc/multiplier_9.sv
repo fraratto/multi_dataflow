@@ -2,6 +2,7 @@
 `include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
+//NAME OF PORTS AS SCHEMATIC
 
 module multiplier_9#
 (
@@ -9,20 +10,22 @@ module multiplier_9#
 )(
     input clk,
     input rst,        
-    write_interface.actor write_port,                               //sum
-    read_interface.actor read_port_A,                               //opA
-    read_interface.actor read_port_B,                               //opB
-    read_interface.actor read_port_ext_size                         //ext_size
+    write_interface.actor write_port_prod,                               
+    read_interface.actor read_port_opA,                               
+    read_interface.actor read_port_opB,                               
+    read_interface.actor read_port_ext_size                         
 );
 
     //local parameters
     parameter DATA_WIDTH_EXT_SIZE=7;                                
-    parameter DATA_WIDTH=8;                                    
-    parameter DATA_WIDTH_OP_B=9;                                        
+    parameter DATA_WIDTH_OP_A=8;                                        
+    parameter DATA_WIDTH_OP_B=9;                                    
+    parameter DATA_WIDTH=18;        
     parameter TAG_WIDTH = $clog2(FLUX);
     parameter WIDTH_EXT_SIZE=DATA_WIDTH_EXT_SIZE+TAG_WIDTH;
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;
     parameter WIDTH_OP_B=DATA_WIDTH_OP_B+TAG_WIDTH;
+    parameter WIDTH_OP_A=DATA_WIDTH_OP_A+TAG_WIDTH;    
     
     //state parameters
     parameter IDLE=0;
@@ -59,7 +62,9 @@ module multiplier_9#
     logic en_max;                                                   //enable signal
     
     //operators
-    logic signed [WIDTH-(TAG_WIDTH)-1:0] op_A;                 //needed for operation
+    logic signed [WIDTH_OP_A-(TAG_WIDTH)-1:0] adapter;              //needed for adapting input for operation    
+    logic signed [WIDTH-(TAG_WIDTH)-1:0] op_A;                      //needed for operation
+
     
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                                      //priority data
@@ -78,10 +83,10 @@ module multiplier_9#
             //choice about which data flux will be elaborated by the actor 
             for(i=0;i<=FLUX-1;i=i+1)
                 if(
-                  (read_port_B.empty[i]==0 & read_port_ext_size.empty[i]==0 & state[i]==IDLE)                            //condizione 1
-                | (read_port_A.empty[i]==0 & state[i]==WORK & cnt_h[i]<max[i] & cnt_v[i]<max[i] & write_port.full==0)    //condizione 2
-                | (read_port_A.empty[i]==0 & state[i]==WORK & cnt_v[i]<max[i] & write_port.full==0)                      //condizione 3
-                | (read_port_A.empty[i]==0 & state[i]==WORK & write_port.full==0)                                        //condizione 4
+                  (read_port_opB.empty[i]==0 & read_port_ext_size.empty[i]==0 & state[i]==IDLE)                            //condizione 1
+                | (read_port_opA.empty[i]==0 & state[i]==WORK & cnt_h[i]<max[i] & cnt_v[i]<max[i] & write_port_prod.full==0)    //condizione 2
+                | (read_port_opA.empty[i]==0 & state[i]==WORK & cnt_v[i]<max[i] & write_port_prod.full==0)                      //condizione 3
+                | (read_port_opA.empty[i]==0 & state[i]==WORK & write_port_prod.full==0)                                        //condizione 4
                     )
                     begin
                         tag=i; 
@@ -99,7 +104,7 @@ module multiplier_9#
                                    
                  
             //condizione 1 
-            if(read_port_B.empty[tag]==0 & read_port_ext_size.empty[tag]==0 & eqv_state==IDLE)
+            if(read_port_opB.empty[tag]==0 & read_port_ext_size.empty[tag]==0 & eqv_state==IDLE)
                 begin
                     //read
                         eqv_read_A = 0;
@@ -107,8 +112,8 @@ module multiplier_9#
                         eqv_read_ext_size = 1;
                     //write
                         op_A='x;                           
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_prod.din = 'x; 
+                        write_port_prod.write = 0;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -116,7 +121,7 @@ module multiplier_9#
                         eqv_max_nxt = read_port_ext_size.dout[WIDTH_EXT_SIZE-(TAG_WIDTH)-1:0];
                         en_max = 1;
                     //coeff
-                        eqv_coeff_nxt = read_port_B.dout[WIDTH_OP_B-(TAG_WIDTH)-1:0];
+                        eqv_coeff_nxt = read_port_opB.dout[WIDTH_OP_B-(TAG_WIDTH)-1:0];
                         en_coeff = 1;
                     //cnt v    
                         eqv_cnt_v_nxt = eqv_cnt_v;
@@ -126,17 +131,17 @@ module multiplier_9#
                         en_cnt_h = 0;
                 end
             //condizione 2     
-            else if(read_port_A.empty[tag]==0 & eqv_state==WORK & eqv_cnt_h<eqv_max & eqv_cnt_v<eqv_max & write_port.full==0)
+            else if(read_port_opA.empty[tag]==0 & eqv_state==WORK & eqv_cnt_h<eqv_max & eqv_cnt_v<eqv_max & write_port_prod.full==0)
                 begin
                     //read
                         eqv_read_A = 1;
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
-                    //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];  
-                        op_A=op_A*eqv_coeff;                                                                   
-                        write_port.din ={tag, op_A}; 
-                        write_port.write = 1;                                    
+                    //write                        
+                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        op_A=adapter*eqv_coeff;                                                                   
+                        write_port_prod.din ={tag, op_A}; 
+                        write_port_prod.write = 1;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -154,17 +159,17 @@ module multiplier_9#
                         en_cnt_h = 1;
                 end                    
             //condizione 3    
-            else if(read_port_A.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max & write_port.full==0)
+            else if(read_port_opA.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max & write_port_prod.full==0)
                 begin
                     //read
                         eqv_read_A = 1;
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
                     //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];
-                        op_A=op_A*eqv_coeff;                                                                     
-                        write_port.din ={tag, op_A}; 
-                        write_port.write = 1;                                    
+                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        op_A=adapter*eqv_coeff;                                                                     
+                        write_port_prod.din ={tag, op_A}; 
+                        write_port_prod.write = 1;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -182,17 +187,17 @@ module multiplier_9#
                         en_cnt_h = 1;
                 end             
             //condizione 4
-            else if(read_port_A.empty[tag]==0 & eqv_state==WORK & write_port.full==0)
+            else if(read_port_opA.empty[tag]==0 & eqv_state==WORK & write_port_prod.full==0)
                 begin 
                     //read
                         eqv_read_A = 1;
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
                     //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];
-                        op_A=op_A*eqv_coeff;                                                                     
-                        write_port.din ={tag, op_A}; 
-                        write_port.write = 1;                                    
+                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        op_A=adapter*eqv_coeff;                                                                     
+                        write_port_prod.din ={tag, op_A}; 
+                        write_port_prod.write = 1;                                    
                     //state
                         eqv_state_nxt = IDLE;
                         en_state = 1;
@@ -218,8 +223,8 @@ module multiplier_9#
                         eqv_read_ext_size = 0;
                     //write
                         op_A='x;                                  
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_prod.din = 'x; 
+                        write_port_prod.write = 0;                                    
                     //state
                         eqv_state_nxt = eqv_state;
                         en_state = 0;
@@ -242,14 +247,14 @@ module multiplier_9#
                     begin
                         if(i==tag)
                             begin
-                                read_port_A.read[i]=eqv_read_A;
-                                read_port_B.read[i]=eqv_read_B;
+                                read_port_opA.read[i]=eqv_read_A;
+                                read_port_opB.read[i]=eqv_read_B;
                                 read_port_ext_size.read[i]=eqv_read_ext_size;
                             end
                         else    
                             begin
-                                read_port_A.read[i]=0;
-                                read_port_B.read[i]=0;
+                                read_port_opA.read[i]=0;
+                                read_port_opB.read[i]=0;
                                 read_port_ext_size.read[i]=0;
                             end                    
                     end

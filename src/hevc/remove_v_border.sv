@@ -2,6 +2,7 @@
 `include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
+//NAME OF PORTS AS SCHEMATIC
 
 module remove_v_border#
 (
@@ -9,10 +10,10 @@ module remove_v_border#
 )(
     input clk,
     input rst,        
-    write_interface.actor write_port,                               //sum
-    read_interface.actor read_port_A,                               //opA
-    read_interface.actor read_port_ext_size,                        //ext_size
-    read_interface.actor read_port_real_size                        //real_size
+    write_interface.actor write_port_out_pel,                               
+    read_interface.actor read_port_in_pel,                               
+    read_interface.actor read_port_ext_size,                        
+    read_interface.actor read_port_real_size                        
 );
 
     //local parameters
@@ -80,11 +81,11 @@ module remove_v_border#
             for(i=0;i<=FLUX-1;i=i+1)
                     if(
                       (read_port_ext_size.empty[i]==0 & read_port_real_size.empty[i]==0 & state[i]==IDLE)                           //condizione 1
-                    | (read_port_A.empty[i]==0 & state[i]==DROP & (cnt_h[i]<max_h[i] & cnt_v[i]<7) )                                //condizione 2
-                    | (read_port_A.empty[i]==0 & state[i]==DROP & cnt_v[i]<7)                                                       //condizione 3
-                    | (read_port_A.empty[i]==0 & state[i]==DROP & write_port.full==0)                                               //condizione 4
-                    | (read_port_A.empty[i]==0 & state[i]==WORK & (cnt_h[i]<max_h[i] & cnt_v[i]<max_v[i]) & write_port.full==0)     //condizione 5
-                    | (read_port_A.empty[i]==0 & state[i]==WORK & cnt_v[i]<max_v[i]-1 & write_port.full==0)                         //condizione 6
+                    | (read_port_in_pel.empty[i]==0 & state[i]==DROP & (cnt_h[i]<max_h[i] & cnt_v[i]<7) )                                //condizione 2
+                    | (read_port_in_pel.empty[i]==0 & state[i]==DROP & cnt_v[i]<7)                                                       //condizione 3
+                    | (read_port_in_pel.empty[i]==0 & state[i]==DROP & write_port_out_pel.full==0)                                               //condizione 4
+                    | (read_port_in_pel.empty[i]==0 & state[i]==WORK & (cnt_h[i]<max_h[i] & cnt_v[i]<max_v[i]) & write_port_out_pel.full==0)     //condizione 5
+                    | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max_v[i]-1 & write_port_out_pel.full==0)                         //condizione 6
                     | (state[i]==WORK & cnt_v[i]==max_v[i]-1)                                                                       //condizione 7        
                         )
                     begin
@@ -111,16 +112,17 @@ module remove_v_border#
                         eqv_read_real_size = 1;
                     //write
                         op_A='x;                                  
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_out_pel.din = 'x; 
+                        write_port_out_pel.write = 0;                                    
                     //state
                         eqv_state_nxt = DROP;
                         en_state = 1;
                     //max_h
-                        eqv_max_h_nxt = read_port_real_size.dout[WIDTH-(TAG_WIDTH)-1:0]-1;
+                        eqv_max_h_nxt = read_port_real_size.dout[WIDTH_REAL_SIZE-(TAG_WIDTH)-1:0];
+                        eqv_max_h_nxt = eqv_max_h_nxt - 1;
                         en_max_h = 1;
                     //max_v
-                        eqv_max_v_nxt = read_port_ext_size.dout[WIDTH-(TAG_WIDTH)-1:0];
+                        eqv_max_v_nxt = read_port_ext_size.dout[WIDTH_EXT_SIZE-(TAG_WIDTH)-1:0];
                         en_max_v = 1;                        
                     //cnt v    
                         eqv_cnt_v_nxt = eqv_cnt_v;
@@ -130,7 +132,7 @@ module remove_v_border#
                         en_cnt_h = 0;
                 end
             //condizione 2     
-            else if(read_port_A.empty[tag]==0 & eqv_state==DROP & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<7) )
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==DROP & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<7) )
                 begin
                     //read
                         eqv_read_A = 1;
@@ -138,8 +140,8 @@ module remove_v_border#
                         eqv_read_real_size = 0;
                     //write
                         op_A='x;                                 
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_out_pel.din = 'x; 
+                        write_port_out_pel.write = 0;                                    
                     //state
                         eqv_state_nxt = DROP;
                         en_state = 1;
@@ -157,7 +159,7 @@ module remove_v_border#
                         en_cnt_h = 1;
                 end                   
             //condizione 3    
-            else if(read_port_A.empty[tag]==0 & eqv_state==DROP & eqv_cnt_v<7)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==DROP & eqv_cnt_v<7)
                 begin
                     //read
                         eqv_read_A = 1;
@@ -165,8 +167,8 @@ module remove_v_border#
                         eqv_read_real_size = 0;
                     //write
                         op_A='x;                                  
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_out_pel.din = 'x; 
+                        write_port_out_pel.write = 0;                                    
                     //state
                         eqv_state_nxt = DROP;
                         en_state = 1;
@@ -184,16 +186,16 @@ module remove_v_border#
                         en_cnt_h = 1;
                 end             
             //condizione 4
-            else if(read_port_A.empty[tag]==0 & eqv_state==DROP & write_port.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==DROP & write_port_out_pel.full==0)
                 begin
                     //read
                         eqv_read_A = 1;
                         eqv_read_ext_size = 0;
                         eqv_read_real_size = 0;
                     //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
-                        write_port.din = {tag,op_A}; 
-                        write_port.write = 1;                                    
+                        op_A=read_port_in_pel.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
+                        write_port_out_pel.din = {tag,op_A}; 
+                        write_port_out_pel.write = 1;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -211,16 +213,16 @@ module remove_v_border#
                         en_cnt_h = 1;
                 end 
             //condizione 5
-            else if(read_port_A.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<eqv_max_v) & write_port.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<eqv_max_v) & write_port_out_pel.full==0)
                 begin
                     //read
                         eqv_read_A = 1;
                         eqv_read_ext_size = 0;
                         eqv_read_real_size = 0;
                     //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
-                        write_port.din = {tag,op_A}; 
-                        write_port.write = 1;                                    
+                        op_A=read_port_in_pel.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
+                        write_port_out_pel.din = {tag,op_A}; 
+                        write_port_out_pel.write = 1;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -238,16 +240,16 @@ module remove_v_border#
                         en_cnt_h = 1;
                 end
             //condizione 6
-            else if(read_port_A.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max_v-1 & write_port.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max_v-1 & write_port_out_pel.full==0)
                 begin
                     //read
                         eqv_read_A = 1;
                         eqv_read_ext_size = 0;
                         eqv_read_real_size = 0;
                     //write
-                        op_A=read_port_A.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
-                        write_port.din = {tag,op_A}; 
-                        write_port.write = 1;                                    
+                        op_A=read_port_in_pel.dout[WIDTH-(TAG_WIDTH)-1:0];                                 
+                        write_port_out_pel.din = {tag,op_A}; 
+                        write_port_out_pel.write = 1;                                    
                     //state
                         eqv_state_nxt = WORK;
                         en_state = 1;
@@ -273,8 +275,8 @@ module remove_v_border#
                         eqv_read_real_size = 0;
                     //write
                         op_A='x;                                  
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_out_pel.din = 'x; 
+                        write_port_out_pel.write = 0;                                    
                     //state
                         eqv_state_nxt = IDLE;
                         en_state = 1;
@@ -300,8 +302,8 @@ module remove_v_border#
                         eqv_read_real_size = 0;
                     //write
                         op_A='x;                                 
-                        write_port.din = 'x; 
-                        write_port.write = 0;                                    
+                        write_port_out_pel.din = 'x; 
+                        write_port_out_pel.write = 0;                                    
                     //state
                         eqv_state_nxt = eqv_state;
                         en_state = 0;
@@ -324,13 +326,13 @@ module remove_v_border#
                     begin
                         if(i==tag)
                             begin
-                                read_port_A.read[i]=eqv_read_A;
+                                read_port_in_pel.read[i]=eqv_read_A;
                                 read_port_ext_size.read[i]=eqv_read_ext_size;
                                 read_port_real_size.read[i]=eqv_read_real_size;                                
                             end
                         else    
                             begin
-                                read_port_A.read[i]=0;
+                                read_port_in_pel.read[i]=0;
                                 read_port_ext_size.read[i]=0;
                                 read_port_real_size.read[i]=0;                                
                             end                    
