@@ -85,10 +85,10 @@ module line_buffer#
             //choice about which data flux will be elaborated by the actor 
             for(i=0;i<=FLUX-1;i=i+1)
                 if(
-                  (read_port_ext_size.empty[i]==0 & read_port_real_size.empty[i]==0 & state[i]==IDLE)                           //condizione 1
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & (cnt_h[i]<max_h[i] & cnt_v[i]<max_v[i]) & write_port_out_pel.full==0)     //condizione 2
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max_v[i]-1 & write_port_out_pel.full==0)                         //condizione 3
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & write_port_out_pel.full==0)                                               //condizione 4        
+                  (read_port_ext_size.empty[i]==0 & read_port_real_size.empty[i]==0 & state[i]==IDLE)                                           //condizione 1
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & (cnt_h[i]<max_h[i] & cnt_v[i]<max_v[i]) & write_port_out_pel.full[i]==0)     //condizione 2
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max_v[i]-1 & write_port_out_pel.full[i]==0)                         //condizione 3
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & write_port_out_pel.full[i]==0)                                               //condizione 4        
                     )
                     begin
                         tag=i; 
@@ -140,7 +140,7 @@ module line_buffer#
                         en_line_buffer=0;
                 end
             //condizione 2     
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<eqv_max_v) & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max_h & eqv_cnt_v<eqv_max_v) & write_port_out_pel.full[tag]==0)
                 begin
                     //read
                         eqv_read_A = 1;
@@ -172,7 +172,7 @@ module line_buffer#
                         en_line_buffer[eqv_cnt_h]=1;
                 end                   
             //condizione 3    
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max_v-1 & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max_v-1 & write_port_out_pel.full[tag]==0)
                 begin
                     //read
                         eqv_read_A = 1;
@@ -204,7 +204,7 @@ module line_buffer#
                         en_line_buffer[eqv_cnt_h]=1;
                 end             
             //condizione 4
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & write_port_out_pel.full[tag]==0)
                 begin
                     //read
                         eqv_read_A = 1;

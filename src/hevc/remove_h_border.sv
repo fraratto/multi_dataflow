@@ -71,12 +71,12 @@ module remove_h_border#
             //choice about which data flux will be elaborated by the actor 
             for(i=0;i<=FLUX-1;i=i+1)
                 if(
-                  (read_port_ext_size.empty[i]==0 & state[i]==IDLE)                                                         //condizione 1
-                | (read_port_in_pel.empty[i]==0 & state[i]==DROP & cnt_h[i]<6)                                                   //condizione 2
-                | (read_port_in_pel.empty[i]==0 & state[i]==DROP)                                                                //condizione 3
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_h[i]<max[i]-1 & cnt_v[i]<max[i]+1 & write_port_out_pel.full==0)   //condizione 4
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max[i] & write_port_out_pel.full==0)                         //condizione 5
-                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & write_port_out_pel.full==0)                                           //condizione 6
+                  (read_port_ext_size.empty[i]==0 & state[i]==IDLE)                                                                         //condizione 1
+                | (read_port_in_pel.empty[i]==0 & state[i]==DROP & cnt_h[i]<6)                                                              //condizione 2
+                | (read_port_in_pel.empty[i]==0 & state[i]==DROP)                                                                           //condizione 3
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_h[i]<max[i]-1 & cnt_v[i]<max[i]+1 & write_port_out_pel.full[i]==0)   //condizione 4
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max[i] & write_port_out_pel.full[i]==0)                         //condizione 5
+                | (read_port_in_pel.empty[i]==0 & state[i]==WORK & write_port_out_pel.full[i]==0)                                           //condizione 6
                     )
                         begin
                             tag=i; 
@@ -163,7 +163,7 @@ module remove_h_border#
                         en_cnt_h = 0;
                 end             
             //condizione 4
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max-1 & eqv_cnt_v<eqv_max+1) & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & (eqv_cnt_h<eqv_max-1 & eqv_cnt_v<eqv_max+1) & write_port_out_pel.full[tag]==0)
                 begin 
                     //read
                         eqv_read_A = 1;
@@ -186,7 +186,7 @@ module remove_h_border#
                         en_cnt_h = 1;
                 end
             //condizione 5
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max & write_port_out_pel.full[tag]==0)
                 begin 
                     //read
                         eqv_read_A = 1;
@@ -209,7 +209,7 @@ module remove_h_border#
                         en_cnt_h = 1;
                 end
             //condizione 6
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & write_port_out_pel.full==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & write_port_out_pel.full[tag]==0)
                 begin 
                     //read
                         eqv_read_A = 1;

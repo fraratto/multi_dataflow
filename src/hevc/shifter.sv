@@ -32,7 +32,7 @@ module shifter#
           
             //choice about which data flux will be elaborated by the actor                            
             for(i=0;i<=FLUX-1;i=i+1)
-                if(read_port_in_pel.empty[i]==0 & write_port_out_pel.full==0) 
+                if(read_port_in_pel.empty[i]==0 & write_port_out_pel.full[i]==0) 
                     begin
                         tag=i; 
                         break;
@@ -43,7 +43,7 @@ module shifter#
             //operations
                 
                 //operation is available  
-                if(write_port_out_pel.full==0 & read_port_in_pel.empty[tag]==0)    
+                if(write_port_out_pel.full[tag]==0 & read_port_in_pel.empty[tag]==0)    
                     begin
                         eqv_read=1;
                         write_port_out_pel.write=1;

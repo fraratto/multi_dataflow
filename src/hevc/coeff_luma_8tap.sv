@@ -51,44 +51,38 @@ module coeff_luma_8tap#
         begin
                  
             //choice about which data flux will be elaborated by the actor             
-            i=FLUX-1;
-            while(i>=1)
-                begin
+            for(i=0;i<=FLUX-1;i=i+1)
                     if(
                       (read_port_alpha.empty[i]==0) 
-                    & (write_port_c0.full==0)
-                    & (write_port_c1.full==0)
-                    & (write_port_c2.full==0)
-                    & (write_port_c3.full==0)
-                    & (write_port_c4.full==0)
-                    & (write_port_c5.full==0)
-                    & (write_port_c6.full==0)
-                    & (write_port_c7.full==0)
+                    & (write_port_c0.full[i]==0)
+                    & (write_port_c1.full[i]==0)
+                    & (write_port_c2.full[i]==0)
+                    & (write_port_c3.full[i]==0)
+                    & (write_port_c4.full[i]==0)
+                    & (write_port_c5.full[i]==0)
+                    & (write_port_c6.full[i]==0)
+                    & (write_port_c7.full[i]==0)
                        ) 
-                        begin
-                            tag=i; 
-                            i=0;
-                        end
-                    else
-                        begin
-                            tag=i-1; 
-                            i=i-1;
-                        end
-                end                      
+                    begin
+                        tag=i; 
+                        break;
+                    end
+                else
+                    tag=0;                      
                                                      
             //write, output data, data memory, data operation and read authorizations
                 
                     //alpha=0 
                     if(
                       (read_port_alpha.empty[tag]==0) 
-                    & (write_port_c0.full==0)
-                    & (write_port_c1.full==0)
-                    & (write_port_c2.full==0)
-                    & (write_port_c3.full==0)
-                    & (write_port_c4.full==0)
-                    & (write_port_c5.full==0)
-                    & (write_port_c6.full==0)
-                    & (write_port_c7.full==0)
+                    & (write_port_c0.full[tag]==0)
+                    & (write_port_c1.full[tag]==0)
+                    & (write_port_c2.full[tag]==0)
+                    & (write_port_c3.full[tag]==0)
+                    & (write_port_c4.full[tag]==0)
+                    & (write_port_c5.full[tag]==0)
+                    & (write_port_c6.full[tag]==0)
+                    & (write_port_c7.full[tag]==0)
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==0)
                        )    
                         begin
@@ -116,14 +110,14 @@ module coeff_luma_8tap#
                     else                     
                     if(
                       (read_port_alpha.empty[tag]==0) 
-                    & (write_port_c0.full==0)
-                    & (write_port_c1.full==0)
-                    & (write_port_c2.full==0)
-                    & (write_port_c3.full==0)
-                    & (write_port_c4.full==0)
-                    & (write_port_c5.full==0)
-                    & (write_port_c6.full==0)
-                    & (write_port_c7.full==0)
+                    & (write_port_c0.full[tag]==0)
+                    & (write_port_c1.full[tag]==0)
+                    & (write_port_c2.full[tag]==0)
+                    & (write_port_c3.full[tag]==0)
+                    & (write_port_c4.full[tag]==0)
+                    & (write_port_c5.full[tag]==0)
+                    & (write_port_c6.full[tag]==0)
+                    & (write_port_c7.full[tag]==0)
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==2)
                       )
                         begin
@@ -151,14 +145,14 @@ module coeff_luma_8tap#
                     else                     
                     if(
                       (read_port_alpha.empty[tag]==0) 
-                    & (write_port_c0.full==0)
-                    & (write_port_c1.full==0)
-                    & (write_port_c2.full==0)
-                    & (write_port_c3.full==0)
-                    & (write_port_c4.full==0)
-                    & (write_port_c5.full==0)
-                    & (write_port_c6.full==0)
-                    & (write_port_c7.full==0)
+                    & (write_port_c0.full[tag]==0)
+                    & (write_port_c1.full[tag]==0)
+                    & (write_port_c2.full[tag]==0)
+                    & (write_port_c3.full[tag]==0)
+                    & (write_port_c4.full[tag]==0)
+                    & (write_port_c5.full[tag]==0)
+                    & (write_port_c6.full[tag]==0)
+                    & (write_port_c7.full[tag]==0)
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==4)
                       )
                         begin
@@ -186,14 +180,14 @@ module coeff_luma_8tap#
                     else                     
                     if(
                       (read_port_alpha.empty[tag]==0) 
-                    & (write_port_c0.full==0)
-                    & (write_port_c1.full==0)
-                    & (write_port_c2.full==0)
-                    & (write_port_c3.full==0)
-                    & (write_port_c4.full==0)
-                    & (write_port_c5.full==0)
-                    & (write_port_c6.full==0)
-                    & (write_port_c7.full==0)
+                    & (write_port_c0.full[tag]==0)
+                    & (write_port_c1.full[tag]==0)
+                    & (write_port_c2.full[tag]==0)
+                    & (write_port_c3.full[tag]==0)
+                    & (write_port_c4.full[tag]==0)
+                    & (write_port_c5.full[tag]==0)
+                    & (write_port_c6.full[tag]==0)
+                    & (write_port_c7.full[tag]==0)
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==6)
                       )
                         begin

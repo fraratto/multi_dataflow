@@ -1,15 +1,15 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
-`define DATA_WIDTH 8
+`define DATA_WIDTH 4
 `define DEPTH 4
-`define FLUX 2
-`define PORTS 2
+`define FLUX 1
+`define PORTS 1
  
 module wrapper_ddf(
 	input clk, rst,
 	output [(`DATA_WIDTH + $clog2(`FLUX))-1 : 0] din,
 	output write,
-	input full,
+	input [`FLUX-1:0] full,
 	input [((`DATA_WIDTH + $clog2(`FLUX))*`PORTS)-1 : 0] dout,
 	output [(`FLUX*`PORTS)-1:0] read,
 	input [(`FLUX*`PORTS)-1:0] empty,

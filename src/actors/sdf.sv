@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
+//PROBLEMA OVERFLOW QUANDO SOMMO EQV_ACC E TOTAL_DATA DIRETTAMENTE SU WRITE.DIN?
+
 module sdf#
 (
     DATA_WIDTH=8,
@@ -41,7 +43,8 @@ module sdf#
 
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
-    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable 
+    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable
+    logic [WIDTH-(TAG_WIDTH)-1:0] adapter;              //support operation variable     
     logic [(WIDTH*PORTS)-1:0] carrier1;                 //support operation variable
     logic [WIDTH-(TAG_WIDTH)-1:0] carrier2;             //support operation variable
 
@@ -65,7 +68,7 @@ module sdf#
          
             //choice about which data flux will be elaborated by the actor             
             for(i=0;i<=FLUX-1;i=i+1)
-                if(eqv_empty[i]==0 & write_port.full==0) 
+                if(eqv_empty[i]==0 & write_port.full[i]==0)  
                     begin
                         tag=i; 
                         break;
@@ -94,26 +97,28 @@ module sdf#
             //write, output data, data memory, data operation and read authorizations
                 
                 //the last operation is available  
-                if(eqv_cnt==0 & write_port.full==0 & eqv_empty[tag]==0)    
+                if(eqv_cnt==0 & write_port.full[tag]==0 & eqv_empty[tag]==0)    
                     begin
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=1;
                             end
                         write_port.write=1;
-                        write_port.din={tag,(eqv_acc+total_data)};
+                        adapter=eqv_acc+total_data;
+                        write_port.din={tag,adapter};
                         eqv_accnxt=0;
                         eqv_cntnxt=NUM;
                     end
                 //the ordinary operation is available         
-                else if(eqv_cnt!=0 & write_port.full==0 & eqv_empty[tag]==0)   
+                else if(eqv_cnt!=0 & write_port.full[tag]==0 & eqv_empty[tag]==0)   
                     begin
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=1;
                             end                
                         write_port.write=1;
-                        write_port.din={tag,(eqv_acc+total_data)};
+                        adapter=eqv_acc+total_data;
+                        write_port.din={tag,adapter};
                         eqv_accnxt=eqv_acc+total_data;
                         eqv_cntnxt=eqv_cnt-1;
                     end
@@ -124,6 +129,7 @@ module sdf#
                             begin
                                 eqv_read[j]=0;
                             end
+                        adapter='x;
                         write_port.write=0;
                         write_port.din={tag,eqv_acc}; 
                         eqv_accnxt=eqv_acc;

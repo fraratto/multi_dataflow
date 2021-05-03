@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
+//PROBLEMA OVERFLOW QUANDO SOMMO EQV_ACC E TOTAL_DATA DIRETTAMENTE SU WRITE.DIN?
+
 module csdf#
 (
     DATA_WIDTH=8,
@@ -44,7 +46,8 @@ module csdf#
 
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
-    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable 
+    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable
+    logic [WIDTH-(TAG_WIDTH)-1:0] adapter;              //support operation variable     
     logic [(WIDTH*PORTS)-1:0] carrier1;                 //support operation variable
     logic [WIDTH-(TAG_WIDTH)-1:0] carrier2;             //support operation variable
 
@@ -69,9 +72,9 @@ module csdf#
             //choice about which data flux will be elaborated by the actor 
             for(i=0;i<=FLUX-1;i=i+1)
                 if(
-                  (cnt[i]==0 & write_port.full==0 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available and data can be sended at the first try
-                | (cnt[i]==0 & write_port.full==1 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available but the data cannot be sended at the first try
-                | (cnt[i]==0 & write_port.full==0 & ready[i]==1)                    //the last operation has been done and data can be sended
+                  (cnt[i]==0 & write_port.full[i]==0 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available and data can be sended at the first try
+                | (cnt[i]==0 & write_port.full[i]==1 & ready[i]==0 & eqv_empty[i]==0)  //the last operation is available but the data cannot be sended at the first try
+                | (cnt[i]==0 & write_port.full[i]==0 & ready[i]==1)                    //the last operation has been done and data can be sended
                 | (cnt[i]!=0 & eqv_empty[i]==0)                                     //the ordinary operation is available
                     )
                     begin
@@ -102,38 +105,41 @@ module csdf#
             //write, output data, data memory, data operation, ready and read authorizations
                
                 //the last operation is available and data can be sended at the first try 
-                if(eqv_cnt==0 & write_port.full==0 & eqv_ready==0 & eqv_empty[tag]==0)
+                if(eqv_cnt==0 & write_port.full[tag]==0 & eqv_ready==0 & eqv_empty[tag]==0)
                     begin
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=1;
                             end 
-                        write_port.din={tag,eqv_acc+total_data}; 
+                        adapter=eqv_acc+total_data;    
+                        write_port.din={tag,adapter}; 
                         write_port.write=1; 
                         eqv_cntnxt=NUM;
                         eqv_accnxt=0;
                         eqv_readynxt=0;
                     end
                 //the last operation is available but the data cannot be sended at the first try     
-                else if(eqv_cnt==0 & write_port.full==1 & eqv_ready==0 & eqv_empty[tag]==0)
+                else if(eqv_cnt==0 & write_port.full[tag]==1 & eqv_ready==0 & eqv_empty[tag]==0)
                     begin
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=1;
                             end 
-                        write_port.din={tag,eqv_acc+total_data}; 
+                        adapter=eqv_acc+total_data;    
+                        write_port.din={tag,adapter}; 
                         write_port.write=0; 
                         eqv_cntnxt=eqv_cnt;
                         eqv_accnxt=eqv_acc+total_data;
                         eqv_readynxt=1;
                     end                    
                 //the last operation has been done and data can be sended    
-                else if(eqv_cnt==0 & write_port.full==0 & eqv_ready==1)
+                else if(eqv_cnt==0 & write_port.full[tag]==0 & eqv_ready==1)
                     begin
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=0;
-                            end         
+                            end
+                        adapter='x;         
                         write_port.din={tag,eqv_acc}; 
                         write_port.write=1; 
                         eqv_cntnxt=NUM;
@@ -147,7 +153,8 @@ module csdf#
                             begin
                                 eqv_read[j]=1;
                             end                     
-                        write_port.din={tag,eqv_acc+total_data}; 
+                        adapter=eqv_acc+total_data;    
+                        write_port.din={tag,adapter}; 
                         write_port.write=0;
                         eqv_cntnxt=eqv_cnt-1; 
                         eqv_accnxt=eqv_acc+total_data;
@@ -159,7 +166,8 @@ module csdf#
                         for(j=0;j<=PORTS-1;j=j+1)
                             begin
                                 eqv_read[j]=0;
-                            end                         
+                            end
+                        adapter='x;                         
                         write_port.din={tag,eqv_acc}; 
                         write_port.write=0;
                         eqv_cntnxt=eqv_cnt; 

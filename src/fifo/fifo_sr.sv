@@ -77,20 +77,6 @@ module fifo_sr#(
                         end
             end            
 
-    //signals' update - lastwrite            
-    always_ff@(posedge clk)
-        if(rst)
-            begin
-                for(l=0;l<=FLUX-1;l=l+1)
-                        lastwrite[l]<=0;
-            end                                 
-        else if(write_port.write==1)  
-            begin
-                for(l=0;l<=FLUX-1;l=l+1)
-                    if(tag==l)                 
-                        lastwrite[l]<=Wp;                
-            end
-
     //signals' update - statusreg
     always_ff@(posedge clk)
         if(rst)
@@ -108,7 +94,6 @@ module fifo_sr#(
                             statusreg[Rp[m]]<=0;
                     end
             end                                                                                                                    
-
 
     //signals' update - Rpstory            
     always_ff@(posedge clk)
@@ -134,18 +119,32 @@ module fifo_sr#(
 
     //writing procedure
     always_ff@(posedge clk)
-        if(write_port.write==1) 
+        if(write_port.write==1)
+            begin
+                mem_ram[Wp]<=write_port.din; 
                 for(p=0;p<=FLUX-1;p=p+1)
-                    begin
-                        if(tag==p) 
-                            begin
-                                mem_ram[Wp]<=write_port.din;
-                                if(Rpstory[p]!=0) 
-                                    begin
-                                        ram_nxt[lastwrite[p]]<=Wp;
-                                    end
-                            end
-                    end       
+                    if(tag==p) 
+                        begin
+                            if(Rpstory[p]!=0) 
+                                begin
+                                    ram_nxt[lastwrite[p]]<=Wp;
+                                end
+                        end
+            end                       
+
+    //signals' update - lastwrite            
+    always_ff@(posedge clk)
+        if(rst)
+            begin
+                for(l=0;l<=FLUX-1;l=l+1)
+                        lastwrite[l]<=0;
+            end                                 
+        else if(write_port.write==1)  
+            begin
+                for(l=0;l<=FLUX-1;l=l+1)
+                    if(tag==l)                 
+                        lastwrite[l]<=Wp;                
+            end
 
     //reading procedure
     for(j=0;j<=FLUX-1;j=j+1)
@@ -153,30 +152,16 @@ module fifo_sr#(
 
     //empty locations detector
     always_comb   
-        if(&statusreg)  
-            nextloc = Wp;
-        else
-            for(q=DEPTH-1; q>=0; q=q-1)
-                begin
-                    if(statusreg[q]==0 && Wp!=q)
-                        begin
-                            nextloc = q;
-                            break;
-                        end
-                    else 
-                        nextloc = Wp; 
-                end                
-
-    //full evaluation data elaboration   
-    always_comb
-        begin
-            Rptot=0;
-                for(r=0;r<=FLUX-1;r=r+1)
+        for(q=DEPTH-1; q>=0; q=q-1)
+            begin
+                if(statusreg[q]==0 && Wp!=q)
                     begin
-                        Rptot=Rptot+Rpstory[r];
+                        nextloc = q;
+                        break;
                     end
-        end
-
+                else 
+                    nextloc = Wp; 
+            end                
 
     //next write pointer updates
     always_comb    
@@ -206,9 +191,9 @@ module fifo_sr#(
     always_comb 
         begin        
             if(Rptot==DEPTH)
-                write_port.full=1;
+                write_port.full='1;
             else 
-                write_port.full=0;
+                write_port.full='0;
                             
             for(u=0;u<=FLUX-1;u=u+1)
                 begin
