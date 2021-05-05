@@ -17,7 +17,7 @@ module fifo_ms#(
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH; 
     
     //memories 
-    logic [WIDTH-1:0] mem_ram [0:DEPTH-1][0:FLUX-1];    //data memory
+    logic [DATA_WIDTH-1:0] mem_ram [0:DEPTH-1][0:FLUX-1];    //data memory
     
     //signals
     logic WnR [0:FLUX-1];                               //write/read evaluation
@@ -75,12 +75,12 @@ module fifo_ms#(
                 for(l=0;l<=FLUX-1;l=l+1)
                     begin
                         if(tag==l) 
-                            mem_ram[Wp[l]][l] <= write_port.din;
+                            mem_ram[Wp[l]][l] <= write_port.din[DATA_WIDTH-1:0];
                     end
                 
     //reading procedure
     for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = mem_ram[Rp[j]][j];                                          
+        assign exits[j] = {j, mem_ram[Rp[j]][j]};                                          
         
     //next write pointer updates
     always_comb
