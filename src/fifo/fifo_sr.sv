@@ -18,7 +18,7 @@ module fifo_sr#(
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH;
     
     //memories    
-    logic [WIDTH-1:0] mem_ram [0:DEPTH-1];              //data memory
+    logic [DATA_WIDTH-1:0] mem_ram [0:DEPTH-1];              //data memory
     logic [ADDR_WIDTH-1:0] ram_nxt [0:DEPTH-1];         //locations' order memory     
     logic [DEPTH-1:0] statusreg;                        //memory status
         
@@ -121,7 +121,7 @@ module fifo_sr#(
     always_ff@(posedge clk)
         if(write_port.write==1)
             begin
-                mem_ram[Wp]<=write_port.din; 
+                mem_ram[Wp]<=write_port.din[DATA_WIDTH-1:0]; 
                 for(p=0;p<=FLUX-1;p=p+1)
                     if(tag==p) 
                         begin
@@ -148,7 +148,7 @@ module fifo_sr#(
 
     //reading procedure
     for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = mem_ram[Rp[j]];               
+        assign exits[j] = {j,mem_ram[Rp[j]]};               
 
     //empty locations detector
     always_comb   
@@ -174,6 +174,16 @@ module fifo_sr#(
                 else 
                    Wpnxt=Wp;
             end
+
+    //full evaluation data elaboration   
+    always_comb
+        begin
+            Rptot=0;
+                for(r=0;r<=FLUX-1;r=r+1)
+                    begin
+                        Rptot=Rptot+Rpstory[r];
+                    end
+        end
 
     //next read pointers updates
     always_comb 
