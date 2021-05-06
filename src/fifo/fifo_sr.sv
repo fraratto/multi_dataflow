@@ -18,7 +18,7 @@ module fifo_sr#(
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH;
     
     //memories    
-    logic [DATA_WIDTH-1:0] mem_ram [0:DEPTH-1];              //data memory
+    logic [WIDTH-(TAG_WIDTH)-1:0] mem_ram [0:DEPTH-1];  //data memory
     logic [ADDR_WIDTH-1:0] ram_nxt [0:DEPTH-1];         //locations' order memory     
     logic [DEPTH-1:0] statusreg;                        //memory status
         
@@ -105,14 +105,14 @@ module fifo_sr#(
         else if(write_port.write==1 | |read_port.read==1) 
             begin
                 for(n=0;n<=FLUX-1;n=n+1)
-                    begin
-                        if(write_port.write & tag==n)
+                    begin                        
+                        if(write_port.write & tag==n & read_port.read[n]==0)
                             begin                  
-                                Rpstory[n]=Rpstory[n]+1;
+                                Rpstory[n]<=Rpstory[n]+1;
                             end
-                        if(read_port.read[n]==1)
+                        else if(read_port.read[n]==1 & ( write_port.write==0 | (write_port.write==1 & tag!=n) ) )
                             begin 
-                                Rpstory[n]=Rpstory[n]-1;
+                                Rpstory[n]<=Rpstory[n]-1;
                             end    
                     end                                                        
             end
@@ -121,7 +121,7 @@ module fifo_sr#(
     always_ff@(posedge clk)
         if(write_port.write==1)
             begin
-                mem_ram[Wp]<=write_port.din[DATA_WIDTH-1:0]; 
+                mem_ram[Wp]<=write_port.din[WIDTH-(TAG_WIDTH)-1:0]; 
                 for(p=0;p<=FLUX-1;p=p+1)
                     if(tag==p) 
                         begin
@@ -163,6 +163,16 @@ module fifo_sr#(
                     nextloc = Wp; 
             end                
 
+    //full evaluation data elaboration   
+    always_comb
+        begin
+            Rptot=0;
+                for(r=0;r<=FLUX-1;r=r+1)
+                    begin
+                        Rptot=Rptot+Rpstory[r];
+                    end
+        end
+
     //next write pointer updates
     always_comb    
         for(s=0;s<=FLUX-1;s=s+1)
@@ -175,21 +185,11 @@ module fifo_sr#(
                    Wpnxt=Wp;
             end
 
-    //full evaluation data elaboration   
-    always_comb
-        begin
-            Rptot=0;
-                for(r=0;r<=FLUX-1;r=r+1)
-                    begin
-                        Rptot=Rptot+Rpstory[r];
-                    end
-        end
-
     //next read pointers updates
     always_comb 
         for(t=0;t<=FLUX-1;t=t+1)
             begin
-                if(write_port.write==1 & tag==t & (Rpstory[t]==0 | (Rpstory[t]==1 & read_port.read[t]==1) ) )   
+                if(write_port.write==1 & tag==t & (Rpstory[t]==0 | (Rpstory[t]==1 & read_port.read[t]==1) ) )    
                    Rpnxt[t]=Wp;
                 else if(Rpstory[t]>1 & read_port.read[t]==1)  
                    Rpnxt[t]=ram_nxt[Rp[t]];
