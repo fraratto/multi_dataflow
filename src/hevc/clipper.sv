@@ -22,6 +22,7 @@ module clip#
     //common combinatory elements
     logic eqv_read;                                     //read signal                        
     logic signed [WIDTH_CLIP-(TAG_WIDTH)-1:0] op_A;     //operator for data evaluation
+	logic signed [DATA_WIDTH-1:0] clipped;				//clipped signal
     
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
@@ -53,11 +54,13 @@ module clip#
                         write_port_out_pel.write=1;
                         op_A=read_port_in_pel.dout[WIDTH_CLIP-(TAG_WIDTH)-1:0];
                             if(op_A>255)
-                                write_port_out_pel.din={tag,255};
+                                clipped = '1;
                             else if(op_A<0)
-                                write_port_out_pel.din={tag,0};
+                                clipped = '0;
                             else
-                                write_port_out_pel.din={tag,op_A[WIDTH-(TAG_WIDTH)-1:0]};                        
+                                clipped = op_A;
+						write_port_out_pel.din = {tag,clipped};
+								
                     end
                 //operation is not available                      
                 else  
