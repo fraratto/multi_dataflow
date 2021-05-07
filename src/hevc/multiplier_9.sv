@@ -62,7 +62,7 @@ module mul_9#
     logic en_max;                                                   //enable signal
     
     //operators
-    logic signed [WIDTH_OP_A-(TAG_WIDTH)-1:0] adapter;              //needed for adapting input for operation    
+    logic signed [WIDTH_OP_A-(TAG_WIDTH):0] adapter;              //needed for adapting input for operation    
     logic signed [WIDTH-(TAG_WIDTH)-1:0] op_A;                      //needed for operation
 
     
@@ -138,7 +138,7 @@ module mul_9#
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
                     //write                        
-                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        adapter={1'b0,read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0]};  
                         op_A=adapter*eqv_coeff;                                                                   
                         write_port_prod.din ={tag, op_A}; 
                         write_port_prod.write = 1;                                    
@@ -166,7 +166,7 @@ module mul_9#
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
                     //write
-                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        adapter={1'b0,read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0]};  
                         op_A=adapter*eqv_coeff;                                                                     
                         write_port_prod.din ={tag, op_A}; 
                         write_port_prod.write = 1;                                    
@@ -194,7 +194,7 @@ module mul_9#
                         eqv_read_B = 0;
                         eqv_read_ext_size = 0;
                     //write
-                        adapter=read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0];  
+                        adapter={1'b0,read_port_opA.dout[WIDTH_OP_A-(TAG_WIDTH)-1:0]};  
                         op_A=adapter*eqv_coeff;                                                                     
                         write_port_prod.din ={tag, op_A}; 
                         write_port_prod.write = 1;                                    
