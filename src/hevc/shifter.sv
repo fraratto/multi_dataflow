@@ -20,6 +20,7 @@ module shift#
     
     //common combinatory elements
     logic eqv_read;                                     //read signal   
+    logic signed [IN_PEL_DATA_WIDTH-1:0] in_pel;
     logic signed [OUT_PEL_DATA_WIDTH-1:0] shifted;      //shifted signal
 
     //external combinatory elements
@@ -50,7 +51,8 @@ module shift#
                     begin
                         eqv_read=1;
                         write_port_out_pel.write=1;
-                        shifted = read_port_in_pel.dout[IN_PEL_DATA_WIDTH-1:0]>>(SHIFT_NUM);
+                        //in_pel = 
+                        shifted = $signed(read_port_in_pel.dout[IN_PEL_DATA_WIDTH-1:0])>>>SHIFT_NUM;
                         write_port_out_pel.din={tag, shifted};
                     end
                 //operation is not available                      
@@ -58,6 +60,7 @@ module shift#
                     begin
                         eqv_read=0;
                         write_port_out_pel.write=0;
+                        shifted = 'x;
                         write_port_out_pel.din='x; 
                     end
 
