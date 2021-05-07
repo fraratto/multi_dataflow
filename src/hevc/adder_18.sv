@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../fifo/fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
 
-module adder_18#
+module add_18#
 (
     FLUX=2                   
 )(        

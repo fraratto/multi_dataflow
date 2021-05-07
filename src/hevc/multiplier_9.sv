@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../fifo/fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
 
-module multiplier_9#
+module mul_9#
 (
     FLUX=2                   
 )(
