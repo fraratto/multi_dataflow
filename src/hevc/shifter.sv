@@ -14,16 +14,19 @@ module shift#
  
     //local parameters
     parameter TAG_WIDTH = $clog2(FLUX);   
-    parameter SHIFT_NUM = 11; 
+    parameter SHIFT_NUM = 12; 
+    parameter IN_PEL_DATA_WIDTH = 27;
+    parameter OUT_PEL_DATA_WIDTH = 16;
     
     //common combinatory elements
-    logic eqv_read;                                     //read signal                        
+    logic eqv_read;                                     //read signal   
+    logic signed [OUT_PEL_DATA_WIDTH-1:0] shifted;      //shifted signal
 
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
 
     //loops
-    integer i;                                          //needed for loops
+    integer i;                                          //needed for loops 
     
     //combinatory logic/elaboration of data 
     always_comb
@@ -47,7 +50,8 @@ module shift#
                     begin
                         eqv_read=1;
                         write_port_out_pel.write=1;
-                        write_port_out_pel.din=read_port_in_pel.dout>>(SHIFT_NUM);
+                        shifted = read_port_in_pel.dout[IN_PEL_DATA_WIDTH-1:0]>>(SHIFT_NUM);
+                        write_port_out_pel.din={tag, shifted};
                     end
                 //operation is not available                      
                 else  
