@@ -50,7 +50,7 @@ module coeff_luma#
         
         begin
                  
-            //choice about which data flux will be elaborated by the actor             
+            //choice about which data flux will be elaborated            
             for(i=0;i<=FLUX-1;i=i+1)
                     if(
                       (read_port_alpha.empty[i]==0) 
