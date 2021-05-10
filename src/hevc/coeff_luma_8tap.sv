@@ -64,11 +64,15 @@ module coeff_luma#
                     & (write_port_c7.full[i]==0)
                        ) 
                     begin
-                        tag=i; 
+                        tag=i;
+						eqv_read=1;
                         break;
                     end
                 else
-                    tag=0;                      
+					begin
+                    tag=0;  
+					eqv_read=0;
+					end
                                                      
             //write, output data, data memory, data operation and read authorizations
                 
@@ -86,7 +90,6 @@ module coeff_luma#
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==0)
                        )    
                         begin
-                            eqv_read=1;
                             //scritture
                                 write_port_c0.write=1;
                                 write_port_c1.write=1;
@@ -121,7 +124,6 @@ module coeff_luma#
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==2)
                       )
                         begin
-                            eqv_read=1;
                             //scritture
                                 write_port_c0.write=1;
                                 write_port_c1.write=1;
@@ -156,7 +158,6 @@ module coeff_luma#
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==4)
                       )
                         begin
-                            eqv_read=1;
                             //scritture
                                 write_port_c0.write=1;
                                 write_port_c1.write=1;
@@ -191,7 +192,6 @@ module coeff_luma#
                     & (read_port_alpha.dout[WIDTH-(TAG_WIDTH)-1:0]==6)
                       )
                         begin
-                            eqv_read=1;
                             //scritture
                                 write_port_c0.write=1;
                                 write_port_c1.write=1;
@@ -214,7 +214,6 @@ module coeff_luma#
                     //default                      
                     else                     
                         begin
-                            eqv_read=0;
                             //scritture
                                 write_port_c0.write=0;
                                 write_port_c1.write=0;
