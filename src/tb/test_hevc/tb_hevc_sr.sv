@@ -49,6 +49,9 @@ module tb_top_sr;
 	integer in_port_i = 0;	
 	logic [7:0] out_port_filter_8tap_file_data [OUT_PORT_FILTER_8TAP_SIZE-1:0];
 	integer out_port_i = 0;
+	logic [6 : 0] ext_size_val;
+	logic [2 : 0] v_alpha_val;
+	logic [2 : 0] h_alpha_val;
 	
 	logic clk;
 	logic rst;
@@ -134,11 +137,14 @@ module tb_top_sr;
 				 
 		// executing filter_8tap
 		start_feeding = 1;
-		v_alpha.din = {1'b0,V_ALPHA};  
+		v_alpha_val = V_ALPHA;
+		v_alpha.din = {1'b1,v_alpha_val};  
 		v_alpha.write = 1;
-		h_alpha.din = {1'b0,H_ALPHA};
+		h_alpha_val = H_ALPHA;
+		h_alpha.din = {1'b1,h_alpha_val};
 		h_alpha.write = 1;
-		ext_size.din = {1'b0,SIZE + TAP-1};
+		ext_size_val = SIZE + TAP-1;
+		ext_size.din = {1'b1,ext_size_val};
 		ext_size.write = 1;
 		
 		#(clk_PERIOD)

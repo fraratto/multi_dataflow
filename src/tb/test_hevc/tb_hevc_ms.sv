@@ -30,7 +30,8 @@ module tb_top_ms;
 	parameter IN_PORT_FILTER_8TAP_SIZE = (SIZE + TAP-1)*(SIZE + TAP-1);
 	
 	parameter FLUX = 2;
-    parameter DEPTH = 4;
+    parameter DEPTH = 16;
+    parameter TAG_WIDTH = $clog2(FLUX);
     
 	`ifdef PRINT_OUTPUT 
 	parameter OUT_PORT_FILTER_8TAP_FILE = "C:/Users/utente/Desktop/output_16x16_v2_h2.mem"; 
@@ -49,6 +50,9 @@ module tb_top_ms;
 	integer in_port_i = 0;	
 	logic [7:0] out_port_filter_8tap_file_data [OUT_PORT_FILTER_8TAP_SIZE-1:0];
 	integer out_port_i = 0;
+	logic [6 : 0] ext_size_val;
+	logic [2 : 0] v_alpha_val;
+	logic [2 : 0] h_alpha_val;
 	
 	logic clk;
 	logic rst;
@@ -134,11 +138,14 @@ module tb_top_ms;
 				 
 		// executing filter_8tap
 		start_feeding = 1;
-		v_alpha.din = {1'b1,V_ALPHA};  
+		v_alpha_val = V_ALPHA;
+		v_alpha.din = {1'b1,v_alpha_val};  
 		v_alpha.write = 1;
-		h_alpha.din = {1'b1,H_ALPHA};
+		h_alpha_val = H_ALPHA;
+		h_alpha.din = {1'b1,h_alpha_val};
 		h_alpha.write = 1;
-		ext_size.din = {1'b1,SIZE + TAP-1};
+		ext_size_val = SIZE + TAP-1;
+		ext_size.din = {1'b1,ext_size_val};
 		ext_size.write = 1;
 		
 		#(clk_PERIOD)
@@ -171,7 +178,7 @@ module tb_top_ms;
 			while(in_port_i < IN_PORT_FILTER_8TAP_SIZE)
 				begin
 				#10
-				if(in_pel.full == 0)
+				if(in_pel.full[1] == 0)
 					begin
 					in_pel.din = {1'b1,in_port_filter_8tap_file_data[in_port_i]};
 					in_pel.write  = 1'b1;
