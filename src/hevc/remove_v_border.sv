@@ -1,8 +1,11 @@
 `timescale 1ns / 1ps
-`include "../fifo/fifo_interface.sv"
+`include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
+
+
+//DA SISTEMARE RISPETTO ALL'ORIGINALE 
 
 module remove_v#
 (
@@ -85,8 +88,8 @@ module remove_v#
                     | (read_port_in_pel.empty[i]==0 & state[i]==DROP & cnt_v[i]<7)                                                                  //condizione 3
                     | (read_port_in_pel.empty[i]==0 & state[i]==DROP & write_port_out_pel.full[i]==0)                                               //condizione 4
                     | (read_port_in_pel.empty[i]==0 & state[i]==WORK & (cnt_h[i]<max_h[i] & cnt_v[i]<max_v[i]) & write_port_out_pel.full[i]==0)     //condizione 5
-                    | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<max_v[i]-1 & write_port_out_pel.full[i]==0)                         //condizione 6
-                    | (state[i]==WORK & cnt_v[i]==max_v[i]-1)                                                                                       //condizione 7        
+                    | (read_port_in_pel.empty[i]==0 & state[i]==WORK & cnt_v[i]<(max_v[i]-1) & write_port_out_pel.full[i]==0)                       //condizione 6
+                    | (state[i]==WORK & cnt_v[i]==max_v[i]-1 & ~(cnt_h[i]<max_h[i]) )                                                               //condizione 7        
                         )
                     begin
                         tag=i; 
@@ -102,7 +105,7 @@ module remove_v#
             eqv_max_h=max_h[tag];
             eqv_state=state[tag];
                                    
-                 
+                                               
             //condizione 1 
             if(read_port_ext_size.empty[tag]==0 & read_port_real_size.empty[tag]==0 & eqv_state==IDLE)
                 begin
@@ -240,7 +243,7 @@ module remove_v#
                         en_cnt_h = 1;
                 end
             //condizione 6
-            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<eqv_max_v-1 & write_port_out_pel.full[tag]==0)
+            else if(read_port_in_pel.empty[tag]==0 & eqv_state==WORK & eqv_cnt_v<(eqv_max_v-1) & write_port_out_pel.full[tag]==0)
                 begin
                     //read
                         eqv_read_A = 1;
@@ -267,7 +270,7 @@ module remove_v#
                         en_cnt_h = 1;
                 end
             //condizione 7
-            else if(eqv_state==WORK & eqv_cnt_v==eqv_max_v-1)
+            else if(eqv_state==WORK & eqv_cnt_v==(eqv_max_v-1) & ~(cnt_h[i]<max_h[i]) )
                 begin
                     //read
                         eqv_read_A = 0;
