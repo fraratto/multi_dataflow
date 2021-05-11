@@ -108,7 +108,7 @@ module fifo_ms#(
             begin
                 if(write_port.write==1 & tag==p & read_port.read[p]==0)  
                     WnRnxt[p]=1;
-                else if(read_port.read[p]==1 & ( write_port.write==0 | (write_port.write==p & tag!=p) ) ) 
+                else if(read_port.read[p]==1 & ( write_port.write==0 | (write_port.write==1 & tag!=p) ) ) 
                     WnRnxt[p]=0;
                 else 
                     WnRnxt[p]=WnR[p];
