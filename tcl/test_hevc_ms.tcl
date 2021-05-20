@@ -21,7 +21,7 @@ set src_dir "./src/hevc"
 	add_files -norecurse {./src/fifo/fifo_ms.sv}
 
 #add sim files
-set tb_dir "./src/tb/test_hevc"
+set tb_dir "./src/tb/test_hevc/test_functionality"
 set_property SOURCE_SET sources_1 [get_filesets sim_1]
 add_files -fileset sim_1 -norecurse "$tb_dir/tb_hevc_ms_2f.sv $tb_dir/input_16x16.mem $tb_dir/output_16x16_v2_h2.mem"
 
