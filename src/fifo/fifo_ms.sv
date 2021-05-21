@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
+`include "ram_interface.sv"
 
 module fifo_ms#(
     DATA_WIDTH = 8,
@@ -55,7 +56,7 @@ module fifo_ms#(
 		assign mem_port.write_address = Wp[j];
 		assign mem_port.read_address = Rp[j];
 		assign mem_port.write_en = write_port.write & (tag==j);
-		assign read_port.dout = mem_port.dout;
+		assign exits[j] = {j,mem_port.dout};
     
 		ram_dual_ported #(
 			.DEPTH(DEPTH),
@@ -84,19 +85,7 @@ module fifo_ms#(
                     Wp[k]<=Wpnxt[k]; 
                     WnR[k]<=WnRnxt[k]; 
                 end
-        
-    //writing procedure
-    always_ff@(posedge clk) 
-        if(write_port.write==1)
-                for(l=0;l<=FLUX-1;l=l+1)
-                    begin
-                        if(tag==l) 
-                            mem_ram[Wp[l] + (DEPTH*l)] <= write_port.din[DATA_WIDTH-1:0];
-                    end
-                
-    //reading procedure
-    for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = {j, mem_ram[Rp[j] + (DEPTH*j)]};                                          
+                                              
         
     //next write pointer updates
     always_comb
