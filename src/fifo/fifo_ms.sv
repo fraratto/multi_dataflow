@@ -16,8 +16,6 @@ module fifo_ms#(
     parameter ADDR_WIDTH = $clog2(DEPTH);
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH; 
     
-    //memories 
-    logic [DATA_WIDTH-1:0] mem_ram [0:(DEPTH*FLUX)-1];      //data memory
     
     //signals
     logic WnR [0:FLUX-1];                                   //write/read evaluation
@@ -49,6 +47,24 @@ module fifo_ms#(
         else
             reader = 0;    
     endfunction
+	
+	generate for(j=0; j<FLUX; j=j+1)
+		begin
+		ram_interface #(DATA_WIDTH, DEPTH) mem_port (clk);
+		assign mem_port.din = write_port.din[DATA_WIDTH-1:0];
+		assign mem_port.write_address = Wp[j];
+		assign mem_port.read_address = Rp[j];
+		assign mem_port.write_en = write_port.write & (tag==j);
+		assign read_port.dout = mem_port.dout;
+    
+		ram_dual_ported #(
+			.DEPTH(DEPTH),
+			.WIDTH(DATA_WIDTH)
+			) mem (
+			.port(mem_port.slave)
+			);
+		end
+	endgenerate
           
     assign    read_port.dout = exits[reader(read_port.read)];
     
