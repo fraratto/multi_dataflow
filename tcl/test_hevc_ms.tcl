@@ -19,6 +19,7 @@ set src_dir "./src/hevc"
 
 	#fifo
 	add_files -norecurse {./src/fifo/fifo_ms.sv}
+	add_files -norecurse {./src/fifo/ram_dual_ported.sv}
 
 #add sim files
 set tb_dir "./src/tb/test_hevc/test_functionality"
