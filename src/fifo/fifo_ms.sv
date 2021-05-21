@@ -3,7 +3,7 @@
 
 module fifo_ms#(
     DATA_WIDTH = 8,
-    DEPTH = 4, 
+    DEPTH = 8, 
     FLUX = 2
 )(
     input clk,
@@ -17,25 +17,25 @@ module fifo_ms#(
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH; 
     
     //memories 
-    logic [DATA_WIDTH-1:0] mem_ram [0:DEPTH-1][0:FLUX-1];    //data memory
+    logic [DATA_WIDTH-1:0] mem_ram [0:(DEPTH*FLUX)-1];      //data memory
     
     //signals
-    logic WnR [0:FLUX-1];                               //write/read evaluation
-    logic WnRnxt [0:FLUX-1];                            //next write/read evaluation
-    logic [WIDTH-1:0] exits [0:FLUX-1];                 //needed for output mux
-    logic [TAG_WIDTH-1:0] tag;                          //needed for tag recognition 
+    logic WnR [0:FLUX-1];                                   //write/read evaluation
+    logic WnRnxt [0:FLUX-1];                                //next write/read evaluation
+    logic [WIDTH-1:0] exits [0:FLUX-1];                     //needed for output mux
+    logic [TAG_WIDTH-1:0] tag;                              //needed for tag recognition 
     
     assign tag = write_port.din[WIDTH-1:WIDTH-1-(TAG_WIDTH-1)];    
             
     //pointers
-    logic [ADDR_WIDTH-1:0] Wp [0:FLUX-1];               //write pointer for each flux
-    logic [ADDR_WIDTH-1:0] Wpnxt [0:FLUX-1];            //next write pointer for each flux
-    logic [ADDR_WIDTH-1:0] Rp [0:FLUX-1];               //read pointer for each flux
-    logic [ADDR_WIDTH-1:0] Rpnxt [0:FLUX-1];            //next read pointer for each flux
+    logic [ADDR_WIDTH-1:0] Wp [0:FLUX-1];                   //write pointer for each flux
+    logic [ADDR_WIDTH-1:0] Wpnxt [0:FLUX-1];                //next write pointer for each flux
+    logic [ADDR_WIDTH-1:0] Rp [0:FLUX-1];                   //read pointer for each flux
+    logic [ADDR_WIDTH-1:0] Rpnxt [0:FLUX-1];                //next read pointer for each flux
     
     //loops
-    integer i,k,l,m,n,p,q;                              //needed for for loops
-    genvar j;                                           //needed for output mux 
+    integer i,k,l,m,n,p,q;                                  //needed for for loops
+    genvar j;                                               //needed for output mux 
     
     //output choice function (reader is the name of the function)
     function automatic [TAG_WIDTH-1 : 0] reader(input [FLUX-1 : 0] read_sig);
@@ -75,12 +75,12 @@ module fifo_ms#(
                 for(l=0;l<=FLUX-1;l=l+1)
                     begin
                         if(tag==l) 
-                            mem_ram[Wp[l]][l] <= write_port.din[DATA_WIDTH-1:0];
+                            mem_ram[Wp[l] + (DEPTH*l)] <= write_port.din[DATA_WIDTH-1:0];
                     end
                 
     //reading procedure
     for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = {j, mem_ram[Rp[j]][j]};                                          
+        assign exits[j] = {j, mem_ram[Rp[j] + (DEPTH*j)]};                                          
         
     //next write pointer updates
     always_comb
@@ -136,3 +136,4 @@ module fifo_ms#(
                     end
             end
 endmodule
+
