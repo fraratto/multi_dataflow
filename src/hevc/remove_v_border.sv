@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../fifo/fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
@@ -270,7 +270,7 @@ module remove_v#
                         en_cnt_h = 1;
                 end
             //condizione 7
-            else if(eqv_state==WORK & eqv_cnt_v==(eqv_max_v-1) & ~(cnt_h[i]<max_h[i]) )
+            else if(eqv_state==WORK & eqv_cnt_v==(eqv_max_v-1) & (cnt_h[i]==max_h[i]) )
                 begin
                     //read
                         eqv_read_A = 0;
