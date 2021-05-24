@@ -10,7 +10,7 @@ module wrapper_csdf(
 	input clk, rst,
 	output [(`DATA_WIDTH + $clog2(`FLUX))-1 : 0] din,
 	output write,
-	input full,
+	input [`FLUX-1:0] full,
 	input [((`DATA_WIDTH + $clog2(`FLUX))*`PORTS)-1 : 0] dout,
 	output [(`FLUX*`PORTS)-1:0] read,
 	input [(`FLUX*`PORTS)-1:0] empty

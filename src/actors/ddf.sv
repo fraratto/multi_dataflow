@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
 
+//PROBLEMA OVERFLOW QUANDO SOMMO EQV_ACC E TOTAL_DATA DIRETTAMENTE SU WRITE.DIN?
+
 module ddf#
 (
     DATA_WIDTH=8,
@@ -50,12 +52,13 @@ module ddf#
 
     //external combinatory elements
     logic [TAG_WIDTH-1:0] tag;                          //priority data
-    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable 
+    logic [WIDTH-(TAG_WIDTH)-1:0] total_data;           //support operation variable
+    logic [WIDTH-(TAG_WIDTH)-1:0] adapter;              //support operation variable              
     logic [(WIDTH*PORTS)-1:0] carrier1;                 //support operation variable
     logic [WIDTH-(TAG_WIDTH)-1:0] carrier2;             //support operation variable
 
     //loops
-    integer i,j,k;
+    integer i,j,k;                                      //needed for loops
     
     //combinatory logic/elaboration of data 
     always_comb
@@ -73,28 +76,20 @@ module ddf#
                 end
     
             //choice about which data flux will be elaborated by the actor 
-            i=FLUX-1;
-            while(i>=1)
-                begin
-                    if(
-                      (nda_port.empty[i]==0 & state[i]==PICK)                                               //actor can request the number of operations
-                    | (cnt[i]==0 & write_port.full==0 & ready[i]==0 & eqv_empty[i]==0 & state[i]==ACTION)   //the last operation is available and data can be sended at the first try
-                    | (cnt[i]==0 & write_port.full==1 & ready[i]==0 & eqv_empty[i]==0 & state[i]==ACTION)   //the last operation is available but the data cannot be sended at the first try
-                    | (cnt[i]==0 & write_port.full==0 & ready[i]==1 & state[i]==ACTION)                     //the last operation has been done and data can be sended
-                    | (cnt[i]!=0 & eqv_empty[i]==0 & state[i]==ACTION)                                      //the ordinary operation is available
-                        )
-                        begin
-                            tag=i; 
-                            k=i;
-                            i=0;
-                        end
-                    else
-                        begin
-                            tag=i-1; 
-                            k=i-1;
-                            i=i-1;
-                        end
-                end
+            for(i=0;i<=FLUX-1;i=i+1)
+                if(
+                  (nda_port.empty[i]==0 & state[i]==PICK)                                               //actor can request the number of operations
+                | (cnt[i]==0 & write_port.full[i]==0 & ready[i]==0 & eqv_empty[i]==0 & state[i]==ACTION)   //the last operation is available and data can be sended at the first try
+                | (cnt[i]==0 & write_port.full[i]==1 & ready[i]==0 & eqv_empty[i]==0 & state[i]==ACTION)   //the last operation is available but the data cannot be sended at the first try
+                | (cnt[i]==0 & write_port.full[i]==0 & ready[i]==1 & state[i]==ACTION)                     //the last operation has been done and data can be sended
+                | (cnt[i]!=0 & eqv_empty[i]==0 & state[i]==ACTION)                                      //the ordinary operation is available
+                    )
+                    begin
+                        tag=i; 
+                        break;
+                    end
+                else
+                    tag=0;
                 
             //initial common element assignments	   
             eqv_cnt=cnt[tag];
@@ -121,6 +116,7 @@ module ddf#
                         write_port.write=0;
                         eqv_accnxt=0;
                         eqv_readynxt=0;
+                        adapter='x;
                         write_port.din={tag,eqv_acc};
                                                 
                         if(nda_port.empty[tag]==0)
@@ -129,7 +125,7 @@ module ddf#
                                 eqv_ndaread=1;
                                 eqv_statenxt=ACTION;                                                        
                                 if(nda_port.dout[WIDTH-(TAG_WIDTH)-1:0]==0)
-                                    //number of operations requested is 0 (in this case the actor will treat this 0 like a 1)                              
+//SHOULD THIS PART BE IN THE ACTOR? //number of operations requested is 0 (in this case the actor will treat this 0 like a 1)                              
                                     begin  
                                         eqv_cntnxt=0;
                                     end  
@@ -170,13 +166,14 @@ module ddf#
                     //write, output data, data memory, data operation, ready and read authorizations
                        
                         //the last operation is available and data can be sended at the first try 
-                        if(eqv_cnt==0 & write_port.full==0 & eqv_ready==0 & eqv_empty[tag]==0)
+                        if(eqv_cnt==0 & write_port.full[tag]==0 & eqv_ready==0 & eqv_empty[tag]==0)
                             begin
                                 for(j=0;j<=PORTS-1;j=j+1)
                                     begin
                                         eqv_read[j]=1;
-                                    end 
-                                write_port.din={tag,eqv_acc+total_data}; 
+                                    end
+                                adapter=eqv_acc+total_data;
+                                write_port.din={tag,adapter}; 
                                 write_port.write=1; 
                                 eqv_cntnxt=0;
                                 eqv_accnxt=0;
@@ -185,13 +182,14 @@ module ddf#
                                 eqv_statenxt=PICK;
                             end
                         //the last operation is available but the data cannot be sended at the first try     
-                        else if(eqv_cnt==0 & write_port.full==1 & eqv_ready==0 & eqv_empty[tag]==0)
+                        else if(eqv_cnt==0 & write_port.full[tag]==1 & eqv_ready==0 & eqv_empty[tag]==0)
                             begin
                                 for(j=0;j<=PORTS-1;j=j+1)
                                     begin
                                         eqv_read[j]=1;
                                     end 
-                                write_port.din={tag,eqv_acc+total_data}; 
+                                adapter=eqv_acc+total_data;
+                                write_port.din={tag,adapter}; 
                                 write_port.write=0; 
                                 eqv_cntnxt=eqv_cnt;
                                 eqv_accnxt=eqv_acc+total_data;
@@ -200,12 +198,13 @@ module ddf#
                                 eqv_statenxt=ACTION;
                             end                    
                         //the last operation has been done and data can be sended    
-                        else if(eqv_cnt==0 & write_port.full==0 & eqv_ready==1)
+                        else if(eqv_cnt==0 & write_port.full[tag]==0 & eqv_ready==1)
                             begin
                                 for(j=0;j<=PORTS-1;j=j+1)
                                     begin
                                         eqv_read[j]=0;
-                                    end         
+                                    end
+                                adapter='x;         
                                 write_port.din={tag,eqv_acc}; 
                                 write_port.write=1; 
                                 eqv_cntnxt=0;
@@ -220,8 +219,9 @@ module ddf#
                                 for(j=0;j<=PORTS-1;j=j+1)
                                     begin
                                         eqv_read[j]=1;
-                                    end                     
-                                write_port.din={tag,eqv_acc+total_data}; 
+                                    end
+                                adapter=eqv_acc+total_data;                     
+                                write_port.din={tag,adapter}; 
                                 write_port.write=0;
                                 eqv_cntnxt=eqv_cnt-1; 
                                 eqv_accnxt=eqv_acc+total_data;
@@ -235,7 +235,8 @@ module ddf#
                                 for(j=0;j<=PORTS-1;j=j+1)
                                     begin
                                         eqv_read[j]=0;
-                                    end                         
+                                    end
+                                adapter='x;                             
                                 write_port.din={tag,eqv_acc}; 
                                 write_port.write=0;
                                 eqv_cntnxt=eqv_cnt; 
@@ -274,12 +275,12 @@ module ddf#
     always_ff @(posedge clk)
         if(rst==1) 
             begin
-                for(i=0;i<=FLUX-1;i=i+1)
+                for(k=0;k<=FLUX-1;k=k+1)
                     begin
-                        ready[i]<=0;
-                        cnt[i]<=0;
-                        acc[i]<=0;
-                        state[i]<=PICK;
+                        ready[k]<=0;
+                        cnt[k]<=0;
+                        acc[k]<=0;
+                        state[k]<=PICK;
                     end
             end
         else 

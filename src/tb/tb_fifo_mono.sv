@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../fifo/fifo_interface.sv"
 
 
 module test_fifo_mono (
@@ -15,7 +15,7 @@ module test_fifo_mono (
 	
 	initial
         begin
-        $display("\nTesting of fifo_mono\n");
+        $display("\nTesting fifo_mono\n");
         cb.rst <= 1;
         write_port.cb_fifo.write <= 0;
         read_port.cb_fifo.read <= 0;
@@ -99,7 +99,7 @@ module test_fifo_mono (
         assert (read_port.cb_fifo.empty) else $error("Test empty assertion after simultaneous read/write");
         
         ##1
-        $display("\nTesting of fifo_mono finished");
+        $display("Testing fifo_mono finished");
 
         $stop;
     end
@@ -109,7 +109,7 @@ endmodule
 
 
 
-module tb_step_2;
+module tb;
 
     parameter CLK_PERIOD = 10;
     parameter WIDTH = 8;

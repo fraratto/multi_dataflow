@@ -17,7 +17,7 @@ module fifo_mono #(
 	logic WnR;			                // last operation
 	    
 	// ram interface instantiation and connection
-	ram_interface mem_port(clk);
+	ram_interface #(WIDTH, DEPTH) mem_port(clk);
     assign mem_port.din = write_port.din;
     assign mem_port.write_address = Wp;
     assign mem_port.read_address = Rp;
