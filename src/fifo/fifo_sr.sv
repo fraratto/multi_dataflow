@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "fifo_interface.sv"
- 
+`include "ram_interface.sv"
+
+
 module fifo_sr#(
     DATA_WIDTH = 8, 
     DEPTH = 4,
@@ -18,8 +20,8 @@ module fifo_sr#(
     parameter WIDTH = DATA_WIDTH+TAG_WIDTH;
     
     //memories    
-    logic [WIDTH-(TAG_WIDTH)-1:0] mem_ram [0:DEPTH-1];  //data memory
-    logic [ADDR_WIDTH-1:0] ram_nxt [0:DEPTH-1];         //locations' order memory     
+    //logic [WIDTH-(TAG_WIDTH)-1:0] mem_ram [0:DEPTH-1];  //data memory
+    //logic [ADDR_WIDTH-1:0] ram_nxt [0:DEPTH-1];         //locations' order memory     
     logic [DEPTH-1:0] statusreg;                        //memory status
         
     //signals
@@ -27,8 +29,10 @@ module fifo_sr#(
     logic [ADDR_WIDTH:0] Rptot;                         //number of all occupied locations
     logic [ADDR_WIDTH-1:0] nextloc;                     //next writeable location in data memory 
     logic [ADDR_WIDTH-1:0] lastwrite [0:FLUX-1];        //last written location for each flux 
-    logic [WIDTH-1:0] exits [0:FLUX-1];                 //needed for output mux
+    //logic [WIDTH-1:0] exits [0:FLUX-1];                 //needed for output mux
     logic [TAG_WIDTH-1:0] tag;                          //needed for tag recognition 
+	logic [TAG_WIDTH-1:0] reader_id;					// binary code of the reader
+	logic [ADDR_WIDTH-1:0]	addr_mem_port_dout;			// needed to update Rp
     
     assign tag = write_port.din[WIDTH-1:WIDTH-1-(TAG_WIDTH-1)];
             
@@ -54,9 +58,45 @@ module fifo_sr#(
         else
             reader = 0;    
     endfunction
+	
+	assign reader_id = reader(read_port.read);
     
     //output choice      
-    assign    read_port.dout = exits[reader(read_port.read)];
+//    assign    read_port.dout = exits[reader(read_port.read)];
+	
+	
+	// data_mem instantiation and connection
+	ram_interface #(DATA_WIDTH, DEPTH) data_mem_port (clk);
+	assign data_mem_port.din = write_port.din[DATA_WIDTH-1:0];
+	assign data_mem_port.write_address = Wp;
+	assign data_mem_port.read_address = Rp[reader_id];
+	assign data_mem_port.write_en = write_port.write;
+	assign read_port.dout = {reader_id, data_mem_port.dout};
+
+	
+	ram_dual_ported #(
+		.DEPTH(DEPTH),
+		.WIDTH(DATA_WIDTH)
+		) data_mem (
+		.port(data_mem_port.slave)
+		);
+
+	// addr_mem instantiation and connection
+	ram_interface #(DATA_WIDTH, DEPTH) addr_mem_port (clk);
+	assign addr_mem_port.din = Wp;
+	assign addr_mem_port.write_address = lastwrite[tag];
+	assign addr_mem_port.read_address = Rp[reader_id];
+	assign addr_mem_port.write_en = write_port.write;
+	assign addr_mem_port_dout = addr_mem_port.dout;
+
+	
+	ram_dual_ported #(
+		.DEPTH(DEPTH),
+		.WIDTH(ADDR_WIDTH)
+		) addr_mem (
+		.port(addr_mem_port.slave)
+		);
+
 
     //pointers' update
     always_ff@(posedge clk)
@@ -118,19 +158,19 @@ module fifo_sr#(
             end
 
     //writing procedure
-    always_ff@(posedge clk)
-        if(write_port.write==1)
-            begin
-                mem_ram[Wp]<=write_port.din[WIDTH-(TAG_WIDTH)-1:0]; 
-                for(p=0;p<=FLUX-1;p=p+1)
-                    if(tag==p) 
-                        begin
-                            if(Rpstory[p]!=0) 
-                                begin
-                                    ram_nxt[lastwrite[p]]<=Wp;
-                                end
-                        end
-            end                       
+    //always_ff@(posedge clk)
+     //   if(write_port.write==1)
+      //      begin
+      //          mem_ram[Wp]<=write_port.din[WIDTH-(TAG_WIDTH)-1:0]; 
+      //          for(p=0;p<=FLUX-1;p=p+1)
+       //             if(tag==p) 
+        //                begin
+         //                   if(Rpstory[p]!=0) 
+        //                        begin
+           //                         ram_nxt[lastwrite[p]]<=Wp;
+          //                      end
+         //               end
+           // end                       
 
     //signals' update - lastwrite            
     always_ff@(posedge clk)
@@ -147,8 +187,8 @@ module fifo_sr#(
             end
 
     //reading procedure
-    for(j=0;j<=FLUX-1;j=j+1)
-        assign exits[j] = {j,mem_ram[Rp[j]]};               
+    //for(j=0;j<=FLUX-1;j=j+1)
+     //   assign exits[j] = {j,mem_ram[Rp[j]]};               
 
     //empty locations detector
     always_comb   
@@ -192,7 +232,7 @@ module fifo_sr#(
                 if(write_port.write==1 & tag==t & (Rpstory[t]==0 | (Rpstory[t]==1 & read_port.read[t]==1) ) )    
                    Rpnxt[t]=Wp;
                 else if(Rpstory[t]>1 & read_port.read[t]==1)  
-                   Rpnxt[t]=ram_nxt[Rp[t]];
+                   Rpnxt[t]=addr_mem_port_dout;
                 else 
                    Rpnxt[t]=Rp[t];
             end
