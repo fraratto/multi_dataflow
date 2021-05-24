@@ -86,7 +86,7 @@ module fifo_sr#(
 	assign addr_mem_port.din = Wp;
 	assign addr_mem_port.write_address = lastwrite[tag];
 	assign addr_mem_port.read_address = Rp[reader_id];
-	assign addr_mem_port.write_en = write_port.write;
+	assign addr_mem_port.write_en = write_port.write & (Rpstory[tag]!=0) ;
 	assign addr_mem_port_dout = addr_mem_port.dout;
 
 	
