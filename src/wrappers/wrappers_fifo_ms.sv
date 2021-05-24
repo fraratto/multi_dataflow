@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 `include "../fifo/fifo_interface.sv"
-`define DATA_WIDTH 8
-`define DEPTH 4
-`define FLUX 2
+`define DATA_WIDTH 32
+`define DEPTH 8
+`define FLUX 4
 
 module wrapper_fifo_ms(
 	input clk, rst,
