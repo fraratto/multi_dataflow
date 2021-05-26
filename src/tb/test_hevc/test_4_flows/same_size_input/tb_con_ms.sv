@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_concurrent_access;
+module tb_con;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------

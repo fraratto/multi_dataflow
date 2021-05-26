@@ -8,24 +8,24 @@ module tb_seq1;
 	parameter clk_PERIOD = 10;
 	
 	parameter TAP = 8;
-    parameter SIZE_0 = 8;    // 4, 8, 16, 32, 64
-	parameter V_ALPHA_0 = 2;  // 0, 2, 4, 6
-	parameter H_ALPHA_0 = 0;  // 0, 2, 4, 6
-    parameter SIZE_1 = 32;    // 4, 8, 16, 32, 64
-	parameter V_ALPHA_1 = 6;  // 0, 2, 4, 6
-	parameter H_ALPHA_1 = 4;  // 0, 2, 4, 6
+    parameter SIZE_1 = 8;    // 4, 8, 16, 32, 64
+	parameter V_ALPHA_1 = 2;  // 0, 2, 4, 6
+	parameter H_ALPHA_1 = 0;  // 0, 2, 4, 6
+    parameter SIZE_0 = 32;    // 4, 8, 16, 32, 64
+	parameter V_ALPHA_0 = 6;  // 0, 2, 4, 6
+	parameter H_ALPHA_0 = 4;  // 0, 2, 4, 6
 	
-	parameter IN_PORT_FLOW_0_FILE = "input_8x8.mem";
+	parameter IN_PORT_FLOW_0_FILE = "input_32x32.mem";
 	parameter IN_PORT_FLOW_0_SIZE = (SIZE_0 + TAP-1)*(SIZE_0 + TAP-1);
-	parameter IN_PORT_FLOW_1_FILE = "input_32x32.mem";
+	parameter IN_PORT_FLOW_1_FILE = "input_8x8.mem";
 	parameter IN_PORT_FLOW_1_SIZE = (SIZE_1 + TAP-1)*(SIZE_1 + TAP-1);
 	
 	parameter FLUX = 2;
     parameter DEPTH = 16;
     
-	parameter OUT_PORT_FLOW_0_FILE = "output_8x8_v2_h0.mem";
+	parameter OUT_PORT_FLOW_0_FILE = "output_32x32_v6_h4.mem";
 	parameter OUT_PORT_FLOW_0_SIZE = SIZE_0*SIZE_0;
-	parameter OUT_PORT_FLOW_1_FILE = "output_32x32_v6_h4.mem";
+	parameter OUT_PORT_FLOW_1_FILE = "output_8x8_v2_h0.mem";
 	parameter OUT_PORT_FLOW_1_SIZE = SIZE_1*SIZE_1;
 	
 	// ----------------------------------------------------------------------------
@@ -131,6 +131,52 @@ module tb_seq1;
 		// network inputs (output side)
 		out_pel.full = 1'b0;
 				 
+		// setup flow_0
+		v_alpha_val = V_ALPHA_0;
+		v_alpha.din = {1'b0,v_alpha_val};  
+		v_alpha.write = 1;
+		h_alpha_val = H_ALPHA_0;
+		h_alpha.din = {1'b0,h_alpha_val};
+		h_alpha.write = 1;
+		ext_size_val = SIZE_0 + TAP-1;
+		ext_size.din = {1'b0,ext_size_val};
+		ext_size.write = 1;
+		t_req[0] = $time;
+		t_start[0] = $time;
+		
+		#(clk_PERIOD)
+		v_alpha.din = 0;
+		v_alpha.write = 0;
+		h_alpha.din = 0;
+		h_alpha.write = 0;
+		ext_size.din = 0;
+		ext_size.write = 0;
+		
+		// feed flow_0
+		while(in_port_i_0 < IN_PORT_FLOW_0_SIZE)	
+			begin
+			#(clk_PERIOD)
+			if(!in_pel.full[0])
+				begin
+				in_pel.din = {1'b0,in_port_flow_0_file_data[in_port_i_0]};
+				in_pel.write  = 1'b1;
+				in_port_i_0 = in_port_i_0 + 1;
+				end	
+			else
+				begin
+				in_pel.din = 0;
+				in_pel.write  = 1'b0;
+				end
+			end
+		#(clk_PERIOD)
+		in_pel.din = 0;
+		in_pel.write  = 1'b0;
+			
+		// wait flow_0 end
+		while(out_port_i_0 < OUT_PORT_FLOW_0_SIZE)
+			#(clk_PERIOD);				
+		
+		#(clk_PERIOD)
 		// setup flow_1
 		v_alpha_val = V_ALPHA_1;
 		v_alpha.din = {1'b1,v_alpha_val};  
@@ -151,6 +197,7 @@ module tb_seq1;
 		h_alpha.write = 0;
 		ext_size.din = 0;
 		ext_size.write = 0;
+			
 		
 		// feed flow_1
 		while(in_port_i_1 < IN_PORT_FLOW_1_SIZE)	
@@ -177,62 +224,15 @@ module tb_seq1;
 			#(clk_PERIOD);				
 		
 		#(clk_PERIOD)
-		// setup flow_0
-		v_alpha_val = V_ALPHA_0;
-		v_alpha.din = {1'b0,v_alpha_val};  
-		v_alpha.write = 1;
-		h_alpha_val = H_ALPHA_0;
-		h_alpha.din = {1'b0,h_alpha_val};
-		h_alpha.write = 1;
-		ext_size_val = SIZE_0 + TAP-1;
-		ext_size.din = {1'b0,ext_size_val};
-		ext_size.write = 1;
-		t_req[0] = $time;
-		t_start[0] = $time;
+		$display("Flow 1 execution time:\t%f us", (t_end[0]-t_start[0]) / 1000.0);
+		$display("Flow 0 execution time:\t%f us", (t_end[1]-t_start[1]) / 1000.0);
+		$display("Total execution time:\t%f us", (t_end[1]-t_start[0]) / 1000.0);
 		
-		#(clk_PERIOD)
-		v_alpha.din = 0;
-		v_alpha.write = 0;
-		h_alpha.din = 0;
-		h_alpha.write = 0;
-		ext_size.din = 0;
-		ext_size.write = 0;
-			
+		$display("Flow 1 waiting time:\t%f us", (t_start[0]-t_req[0]) / 1000.0);
+		$display("Flow 0 waiting time:\t%f us", (t_start[1]-t_req[1]) / 1000.0);
 		
-		// feed flow_0
-		while(in_port_i_0 < IN_PORT_FLOW_0_SIZE)	
-			begin
-			#(clk_PERIOD)
-			if(!in_pel.full[0])
-				begin
-				in_pel.din = {1'b0,in_port_flow_0_file_data[in_port_i_0]};
-				in_pel.write  = 1'b1;
-				in_port_i_0 = in_port_i_0 + 1;
-				end	
-			else
-				begin
-				in_pel.din = 0;
-				in_pel.write  = 1'b0;
-				end
-			end
-		#(clk_PERIOD)
-		in_pel.din = 0;
-		in_pel.write  = 1'b0;
-			
-		// wait flow_0 end
-		while(out_port_i_0 < OUT_PORT_FLOW_0_SIZE)
-			#(clk_PERIOD);			
-		
-		#(clk_PERIOD)
-		$display("Flow 0 execution time:\t%f us", (t_end[0]-t_start[0]) / 1000.0);
-		$display("Flow 1 execution time:\t%f us", (t_end[1]-t_start[1]) / 1000.0);
-		$display("Total execution time:\t%f us", (t_end[0]-t_start[1]) / 1000.0);
-		
-		$display("Flow 0 waiting time:\t%f us", (t_start[0]-t_req[0]) / 1000.0);
-		$display("Flow 1 waiting time:\t%f us", (t_start[1]-t_req[1]) / 1000.0);
-		
-		$display("Flow 0 response time:\t%f us", (t_first[0]-t_req[0]) / 1000.0);
-		$display("Flow 1 response time:\t%f us", (t_first[1]-t_req[1]) / 1000.0);
+		$display("Flow 1 response time:\t%f us", (t_first[0]-t_req[0]) / 1000.0);
+		$display("Flow 0 response time:\t%f us", (t_first[1]-t_req[1]) / 1000.0);
 		
 		$stop;
 		end

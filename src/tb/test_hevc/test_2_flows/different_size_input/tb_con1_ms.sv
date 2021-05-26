@@ -210,15 +210,15 @@ module tb_con1;
 			#(clk_PERIOD);				
 		
 		#(clk_PERIOD)
-		$display("Flow 0 execution time:\t%f us", (t_end[0]-t_start[0]) / 1000.0);
-		$display("Flow 1 execution time:\t%f us", (t_end[1]-t_start[1]) / 1000.0);
+		$display("Flow 1 execution time:\t%f us", (t_end[0]-t_start[0]) / 1000.0);
+		$display("Flow 0 execution time:\t%f us", (t_end[1]-t_start[1]) / 1000.0);
 		$display("Total execution time:\t%f us", (t_end[0]-t_start[1]) / 1000.0);
 		
-		$display("Flow 0 waiting time:\t%f us", (t_start[0]-t_req[0]) / 1000.0);
-		$display("Flow 1 waiting time:\t%f us", (t_start[1]-t_req[1]) / 1000.0);
+		$display("Flow 1 waiting time:\t%f us", (t_start[0]-t_req[0]) / 1000.0);
+		$display("Flow 0 waiting time:\t%f us", (t_start[1]-t_req[1]) / 1000.0);
 		
-		$display("Flow 0 response time:\t%f us", (t_first[0]-t_req[0]) / 1000.0);
-		$display("Flow 1 response time:\t%f us", (t_first[1]-t_req[1]) / 1000.0);
+		$display("Flow 1 response time:\t%f us", (t_first[0]-t_req[0]) / 1000.0);
+		$display("Flow 0 response time:\t%f us", (t_first[1]-t_req[1]) / 1000.0);
 		
 		$stop;
 		end

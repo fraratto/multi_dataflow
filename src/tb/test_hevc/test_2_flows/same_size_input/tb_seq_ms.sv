@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_concurrent_access;
+module tb_seq
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------
@@ -31,7 +31,6 @@ module tb_concurrent_access;
 	logic [7:0] out_port_filter_8tap_file_data [OUT_PORT_FILTER_8TAP_SIZE-1:0];
 	integer out_port_i_0 = 0;
 	integer out_port_i_1 = 0;
-	integer select_flow = 0;
 	logic [6 : 0] ext_size_val;
 	logic [2 : 0] v_alpha_val;
 	logic [2 : 0] h_alpha_val;
@@ -131,6 +130,38 @@ module tb_concurrent_access;
 		t_start[0] = $time;
 		
 		#(clk_PERIOD)
+		v_alpha.din = 0;
+		v_alpha.write = 0;
+		h_alpha.din = 0;
+		h_alpha.write = 0;
+		ext_size.din = 0;
+		ext_size.write = 0;
+		
+		// feed flow_0
+		while(in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE)	
+			begin
+			#(clk_PERIOD)
+			if(!in_pel.full[0])
+				begin
+				in_pel.din = {1'b0,in_port_filter_8tap_file_data[in_port_i_0]};
+				in_pel.write  = 1'b1;
+				in_port_i_0 = in_port_i_0 + 1;
+				end	
+			else
+				begin
+				in_pel.din = 0;
+				in_pel.write  = 1'b0;
+				end
+			end
+		#(clk_PERIOD)
+		in_pel.din = 0;
+		in_pel.write  = 1'b0;
+			
+		// wait flow_0 end
+		while(out_port_i_0 < OUT_PORT_FILTER_8TAP_SIZE)
+			#(clk_PERIOD);				
+		
+		#(clk_PERIOD)
 		// setup flow_1
 		v_alpha_val = V_ALPHA;
 		v_alpha.din = {1'b1,v_alpha_val};  
@@ -150,47 +181,31 @@ module tb_concurrent_access;
 		h_alpha.din = 0;
 		h_alpha.write = 0;
 		ext_size.din = 0;
+		ext_size.write = 0;
+			
 		
-		// feed all the flows
-		while((in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE) || (in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE))
+		// feed flow_1
+		while(in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE)	
 			begin
 			#(clk_PERIOD)
-				case(select_flow)
-				0:  if(!in_pel.full[0])
-                        begin
-                        in_pel.din = {1'b0,in_port_filter_8tap_file_data[in_port_i_0]};
-                        in_pel.write  = 1'b1;
-                        in_port_i_0 = in_port_i_0 + 1;
-                        end
-                    else
-                        begin
-                        in_pel.din = 0;
-                        in_pel.write  = 1'b0;
-                        end
-				1:  if(!in_pel.full[1])
-                        begin
-                        in_pel.din = {1'b1,in_port_filter_8tap_file_data[in_port_i_1]};
-                        in_pel.write  = 1'b1;
-                        in_port_i_1 = in_port_i_1 + 1;
-					    end
-					 else
-                        begin
-                        in_pel.din = 0;
-                        in_pel.write  = 1'b0;
-                        end
-				-1: begin
-					in_pel.din = 'x;
-					in_pel.write  = 1'b0;
-					end
-				endcase
-
+			if(!in_pel.full[1])
+				begin
+				in_pel.din = {1'b1,in_port_filter_8tap_file_data[in_port_i_1]};
+				in_pel.write  = 1'b1;
+				in_port_i_1 = in_port_i_1 + 1;
+				end	
+			else
+				begin
+				in_pel.din = 0;
+				in_pel.write  = 1'b0;
+				end
 			end
 		#(clk_PERIOD)
 		in_pel.din = 0;
 		in_pel.write  = 1'b0;
-		
-		// wait all the flows to end
-		while((out_port_i_0 < OUT_PORT_FILTER_8TAP_SIZE) || (out_port_i_1 < OUT_PORT_FILTER_8TAP_SIZE))
+			
+		// wait flow_1 end
+		while(out_port_i_1 < OUT_PORT_FILTER_8TAP_SIZE)
 			#(clk_PERIOD);				
 		
 		#(clk_PERIOD)
@@ -206,26 +221,8 @@ module tb_concurrent_access;
 		
 		$stop;
 		end
-	
 	// ----------------------------------------------------------------------------
-	// select_flow managing
-	always @(posedge clk)
-	if(in_pel.write)	// each time a data is written it changes flow 
-		case(select_flow)
-		0: if(in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE)	// unless the other flow has completed
-			 select_flow = 1;
-		    else
-			 select_flow = 0;
-		1: if(in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE)
-			 select_flow = 0;
-		    else
-			 select_flow = 1;
-		default: $error("Error on select_flow!");
-		endcase
 	
-	
-	
-	// ----------------------------------------------------------------------------	
 	// output check
 	// ----------------------------------------------------------------------------
 	always@(posedge clk)

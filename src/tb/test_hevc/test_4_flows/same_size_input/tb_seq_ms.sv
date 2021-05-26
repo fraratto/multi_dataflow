@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_sequential_access;
+module tb_seq;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------

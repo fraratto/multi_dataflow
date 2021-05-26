@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_blk1_ms;
+module tb_blk1;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------

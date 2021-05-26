@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_block_access;
+module tb_blk;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------
