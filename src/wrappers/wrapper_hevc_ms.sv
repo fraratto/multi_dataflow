@@ -4,7 +4,7 @@
 
 // variable parameters 
 `define DEPTH 16
-`define FLUX 2
+`define FLUX 4
 
 // fixed parameters
 `define DATA_WIDTH 8
