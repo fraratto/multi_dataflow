@@ -13,8 +13,8 @@ module wrapper_fifo_mono(
 	output empty
 	);
 	
-	write_interface #(`DATA_WIDTH) write_port (clk);
-	read_interface #(`DATA_WIDTH) read_port (clk);
+	write_interface #(`DATA_WIDTH, 1) write_port (clk);
+	read_interface #(`DATA_WIDTH, 1) read_port (clk);
 	fifo_mono #(`DATA_WIDTH, `DEPTH) dut (.*);
 	
 	assign write_port.din = din;
