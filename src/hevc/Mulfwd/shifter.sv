@@ -1,8 +1,11 @@
+//MODIFICA FATTA
+
 `timescale 1ns / 1ps
-`include "../fifo/fifo_interface.sv"
+`include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
+//`define MONO 1
 
 module shift#
 (
@@ -12,8 +15,13 @@ module shift#
     read_interface.actor read_port_in_pel    
 );
  
-    //local parameters
-    parameter TAG_WIDTH = $clog2(FLUX);   
+    `ifdef MONO  
+    parameter TAG_WIDTH = 0;        
+    `else
+    parameter TAG_WIDTH = $clog2(FLUX);			
+ 	`endif
+ 
+    //local parameters   
     parameter SHIFT_NUM = 12; 
     parameter IN_PEL_DATA_WIDTH = 27;
     parameter OUT_PEL_DATA_WIDTH = 16;
@@ -24,7 +32,7 @@ module shift#
     logic signed [OUT_PEL_DATA_WIDTH-1:0] shifted;      //shifted signal
 
     //external combinatory elements
-    logic [TAG_WIDTH-1:0] tag;                          //priority data
+    logic [TAG_WIDTH:0] tag;                          //priority data
 
     //loops
     integer i;                                          //needed for loops 
@@ -42,16 +50,15 @@ module shift#
                         break;
                     end
                 else
-                    tag=0;
+                    tag='1;
                                                                          
             //operations
                 
                 //operation is available  
-                if(write_port_out_pel.full[tag]==0 & read_port_in_pel.empty[tag]==0)    
+                if(!tag[TAG_WIDTH])    
                     begin
                         eqv_read=1;
-                        write_port_out_pel.write=1;
-                        //in_pel = 
+                        write_port_out_pel.write=1; 
                         shifted = $signed(read_port_in_pel.dout[IN_PEL_DATA_WIDTH-1:0])>>>SHIFT_NUM;
                         write_port_out_pel.din={tag, shifted};
                     end

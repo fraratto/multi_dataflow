@@ -6,10 +6,10 @@
 //
 // ----------------------------------------------------------------------------
 `timescale 1ns / 1ps
-`include "../fifo/fifo_interface.sv"
+`include "fifo_interface.sv"
 
 
-//ALL WIRES ARE AS THEY SHOULD BE; ONE MODULE HAS FAILED?
+//RICORDA DI COMMENTARE MONO NEI MODULI (ATTORI E INTERFACCIA) ALTRIMENTI IL SISTEMA FUNZIONA SENZA TAG
 
 
 module top_sr 

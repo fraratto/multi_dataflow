@@ -1,8 +1,11 @@
+//MODIFICA FATTA
+
 `timescale 1ns / 1ps
-`include "../fifo/fifo_interface.sv"
+`include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
+//`define MONO 1
 
 module derive_real_size#
 ( 
@@ -11,9 +14,15 @@ module derive_real_size#
     write_interface.actor write_port_real_size,                  
     read_interface.actor read_port_ext_size                      
 );
+
+    `ifdef MONO  
+    parameter TAG_WIDTH = 0;        
+    `else
+    parameter TAG_WIDTH = $clog2(FLUX);			
+ 	`endif
+
     //local parameters
-    parameter DATA_WIDTH=7;
-    parameter TAG_WIDTH = $clog2(FLUX);   
+    parameter DATA_WIDTH=7;   
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;
     parameter DIFF=7;
     
@@ -21,7 +30,7 @@ module derive_real_size#
     logic eqv_read;                                     //read signal                        
 
     //external combinatory elements
-    logic [TAG_WIDTH-1:0] tag;                          //priority data
+    logic [TAG_WIDTH:0] tag;                          //priority data
     logic [WIDTH-(TAG_WIDTH)-1:0] part;                 //operator for signal
     
     //loops
@@ -40,12 +49,12 @@ module derive_real_size#
                         break;
                     end
                 else
-                    tag=0;                      
+                    tag='1;                      
                                                      
             //write, output data, data memory, data operation and read authorizations
                 
                 //the last operation is available  
-                if(write_port_real_size.full[tag]==0 & read_port_ext_size.empty[tag]==0)    
+                if(!tag[TAG_WIDTH])    
                     begin
                         eqv_read=1;
                         write_port_real_size.write=1;
@@ -73,4 +82,3 @@ module derive_real_size#
         end 
     
 endmodule
-

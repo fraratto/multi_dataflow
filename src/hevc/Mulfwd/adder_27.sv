@@ -1,10 +1,13 @@
+//MODIFICA FATTA
+
 `timescale 1ns / 1ps
-`include "../fifo/fifo_interface.sv"
+`include "fifo_interface.sv"
 
 //TESTBENCHED; EVERYTHING'S OK
 //NAME OF PORTS AS SCHEMATIC
+//`define MONO 1
 
-module add_18#
+module add_27#
 (
     FLUX=2                   
 )(        
@@ -12,10 +15,15 @@ module add_18#
     read_interface.actor read_port_opA,                  
     read_interface.actor read_port_opB                   
 );
- 
+
+    `ifdef MONO   
+    parameter TAG_WIDTH = 0;        
+    `else
+    parameter TAG_WIDTH = $clog2(FLUX);			
+ 	`endif
+ 	
     //local parameters
-    parameter DATA_WIDTH=18;    
-    parameter TAG_WIDTH = $clog2(FLUX);
+    parameter DATA_WIDTH=27;    
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;    
 
     //common combinatory elements
@@ -25,7 +33,7 @@ module add_18#
     logic signed [WIDTH-(TAG_WIDTH)-1:0] sum;           //operator for sum of op_A and op_B
     
     //external combinatory elements
-    logic [TAG_WIDTH-1:0] tag;                          //priority data
+    logic [TAG_WIDTH:0] tag;                          //priority data
 
     //loops
     integer i;                                          //needed for loops
@@ -43,12 +51,12 @@ module add_18#
                         break;
                     end
                 else
-                    tag=0;                      
+                    tag='1;                      
                                                      
             //write, output data, data memory, data operation and read authorizations
                 
                 //the last operation is available  
-                if(write_port_sum.full[tag]==0 & (read_port_opA.empty[tag]==0 & read_port_opB.empty[tag]==0) )    
+                if(!tag[TAG_WIDTH])    
                     begin
                         eqv_read=1;
                         write_port_sum.write=1;
@@ -62,8 +70,8 @@ module add_18#
                         eqv_read=0;
                         op_A='x;
                         op_B='x;
-                        write_port_sum.write=0;
                         sum='x;
+                        write_port_sum.write=0;
                         write_port_sum.din='x; 
                     end
 
@@ -85,7 +93,3 @@ module add_18#
         end 
      
 endmodule
-
-
-
-
