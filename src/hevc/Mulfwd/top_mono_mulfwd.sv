@@ -11,8 +11,7 @@
 
 module top_mono_mulfwd 
 #(
-	parameter DEPTH = 64,
-	parameter FLUX = 1
+	parameter DEPTH = 64
 )(
 
 	// System Signal(s)	        
@@ -49,266 +48,266 @@ module top_mono_mulfwd
     //DELAYS (x7)
     
         //delay_0
-        read_interface #(8,FLUX) rd_delay_0_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_0_out_pel(clk);
+        read_interface #(8) rd_delay_0_in_pel(clk);
+        write_interface #(8) wr_delay_0_out_pel(clk);
         
         //delay_1
-        read_interface #(8,FLUX) rd_delay_1_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_1_out_pel(clk);
+        read_interface #(8) rd_delay_1_in_pel(clk);
+        write_interface #(8) wr_delay_1_out_pel(clk);
         
         //delay_2
-        read_interface #(8,FLUX) rd_delay_2_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_2_out_pel(clk);
+        read_interface #(8) rd_delay_2_in_pel(clk);
+        write_interface #(8) wr_delay_2_out_pel(clk);
         
         //delay_3
-        read_interface #(8,FLUX) rd_delay_3_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_3_out_pel(clk);
+        read_interface #(8) rd_delay_3_in_pel(clk);
+        write_interface #(8) wr_delay_3_out_pel(clk);
         
         //delay_4
-        read_interface #(8,FLUX) rd_delay_4_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_4_out_pel(clk);
+        read_interface #(8) rd_delay_4_in_pel(clk);
+        write_interface #(8) wr_delay_4_out_pel(clk);
         
         //delay_5
-        read_interface #(8,FLUX) rd_delay_5_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_5_out_pel(clk);
+        read_interface #(8) rd_delay_5_in_pel(clk);
+        write_interface #(8) wr_delay_5_out_pel(clk);
         
         //delay_6
-        read_interface #(8,FLUX) rd_delay_6_in_pel(clk);
-        write_interface #(8,FLUX) wr_delay_6_out_pel(clk);
+        read_interface #(8) rd_delay_6_in_pel(clk);
+        write_interface #(8) wr_delay_6_out_pel(clk);
         
     //MUL_9 (x8)
     
         //mul_9_0
-        read_interface #(7,FLUX) rd_mul_9_0_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_0_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_0_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_0_prod(clk);
+        read_interface #(7) rd_mul_9_0_ext_size(clk);
+        read_interface #(8) rd_mul_9_0_opA(clk);
+        read_interface #(9) rd_mul_9_0_opB(clk);
+        write_interface #(18) wr_mul_9_0_prod(clk);
         
         //mul_9_1
-        read_interface #(7,FLUX) rd_mul_9_1_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_1_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_1_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_1_prod(clk);
+        read_interface #(7) rd_mul_9_1_ext_size(clk);
+        read_interface #(8) rd_mul_9_1_opA(clk);
+        read_interface #(9) rd_mul_9_1_opB(clk);
+        write_interface #(18) wr_mul_9_1_prod(clk);
         
         //mul_9_2
-        read_interface #(7,FLUX) rd_mul_9_2_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_2_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_2_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_2_prod(clk);
+        read_interface #(7) rd_mul_9_2_ext_size(clk);
+        read_interface #(8) rd_mul_9_2_opA(clk);
+        read_interface #(9) rd_mul_9_2_opB(clk);
+        write_interface #(18) wr_mul_9_2_prod(clk);
                 
         //mul_9_3
-        read_interface #(7,FLUX) rd_mul_9_3_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_3_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_3_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_3_prod(clk);
+        read_interface #(7) rd_mul_9_3_ext_size(clk);
+        read_interface #(8) rd_mul_9_3_opA(clk);
+        read_interface #(9) rd_mul_9_3_opB(clk);
+        write_interface #(18) wr_mul_9_3_prod(clk);
         
         //mul_9_4
-        read_interface #(7,FLUX) rd_mul_9_4_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_4_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_4_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_4_prod(clk);
+        read_interface #(7) rd_mul_9_4_ext_size(clk);
+        read_interface #(8) rd_mul_9_4_opA(clk);
+        read_interface #(9) rd_mul_9_4_opB(clk);
+        write_interface #(18) wr_mul_9_4_prod(clk);
         
         //mul_9_5
-        read_interface #(7,FLUX) rd_mul_9_5_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_5_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_5_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_5_prod(clk);
+        read_interface #(7) rd_mul_9_5_ext_size(clk);
+        read_interface #(8) rd_mul_9_5_opA(clk);
+        read_interface #(9) rd_mul_9_5_opB(clk);
+        write_interface #(18) wr_mul_9_5_prod(clk);
         
         //mul_9_6
-        read_interface #(7,FLUX) rd_mul_9_6_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_6_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_6_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_6_prod(clk);
+        read_interface #(7) rd_mul_9_6_ext_size(clk);
+        read_interface #(8) rd_mul_9_6_opA(clk);
+        read_interface #(9) rd_mul_9_6_opB(clk);
+        write_interface #(18) wr_mul_9_6_prod(clk);
                 
         //mul_9_7
-        read_interface #(7,FLUX) rd_mul_9_7_ext_size(clk);
-        read_interface #(8,FLUX) rd_mul_9_7_opA(clk);
-        read_interface #(9,FLUX) rd_mul_9_7_opB(clk);
-        write_interface #(18,FLUX) wr_mul_9_7_prod(clk);
+        read_interface #(7) rd_mul_9_7_ext_size(clk);
+        read_interface #(8) rd_mul_9_7_opA(clk);
+        read_interface #(9) rd_mul_9_7_opB(clk);
+        write_interface #(18) wr_mul_9_7_prod(clk);
     
     //MUL_AND_FWD_18 (x7)
     
         //mul_and_fwd_18_0
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_0_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_0_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_0_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_0_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_0_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_0_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_0_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_0_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_0_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_0_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_0_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_0_forward(clk);
     
         //mul_and_fwd_18_1
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_1_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_1_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_1_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_1_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_1_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_1_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_1_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_1_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_1_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_1_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_1_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_1_forward(clk);
     
         //mul_and_fwd_18_2
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_2_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_2_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_2_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_2_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_2_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_2_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_2_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_2_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_2_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_2_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_2_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_2_forward(clk);
             
         //mul_and_fwd_18_3
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_3_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_3_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_3_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_3_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_3_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_3_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_3_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_3_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_3_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_3_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_3_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_3_forward(clk);
     
         //mul_and_fwd_18_4
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_4_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_4_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_4_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_4_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_4_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_4_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_4_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_4_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_4_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_4_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_4_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_4_forward(clk);
         
         //mul_and_fwd_18_5
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_5_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_5_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_5_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_5_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_5_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_5_forward(clk);        
+        read_interface #(7) rd_mul_and_fwd_18_5_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_5_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_5_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_5_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_5_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_5_forward(clk);        
     
         //mul_and_fwd_18_6
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_6_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_and_fwd_18_6_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_and_fwd_18_6_opA(clk);
-        read_interface #(9,FLUX) rd_mul_and_fwd_18_6_opB(clk);
-        write_interface #(27,FLUX) wr_mul_and_fwd_18_6_prod(clk);
-        write_interface #(18,FLUX) wr_mul_and_fwd_18_6_forward(clk);
+        read_interface #(7) rd_mul_and_fwd_18_6_real_size(clk);
+        read_interface #(7) rd_mul_and_fwd_18_6_ext_size(clk);
+        read_interface #(18) rd_mul_and_fwd_18_6_opA(clk);
+        read_interface #(9) rd_mul_and_fwd_18_6_opB(clk);
+        write_interface #(27) wr_mul_and_fwd_18_6_prod(clk);
+        write_interface #(18) wr_mul_and_fwd_18_6_forward(clk);
     
     //MUL_18 (x1)
     
         //mul_18_0
-        read_interface #(7,FLUX) rd_mul_18_0_real_size(clk);
-        read_interface #(7,FLUX) rd_mul_18_0_ext_size(clk);
-        read_interface #(18,FLUX) rd_mul_18_0_opA(clk);
-        read_interface #(9,FLUX) rd_mul_18_0_opB(clk);
-        write_interface #(27,FLUX) wr_mul_18_0_prod(clk);
+        read_interface #(7) rd_mul_18_0_real_size(clk);
+        read_interface #(7) rd_mul_18_0_ext_size(clk);
+        read_interface #(18) rd_mul_18_0_opA(clk);
+        read_interface #(9) rd_mul_18_0_opB(clk);
+        write_interface #(27) wr_mul_18_0_prod(clk);
             
     //ADD_18 (x7)
     
         //add_18_0
-        read_interface #(18,FLUX) rd_add_18_0_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_0_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_0_sum(clk);
+        read_interface #(18) rd_add_18_0_opA(clk);
+        read_interface #(18) rd_add_18_0_opB(clk);
+        write_interface #(18) wr_add_18_0_sum(clk);
         
         //add_18_1
-        read_interface #(18,FLUX) rd_add_18_1_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_1_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_1_sum(clk);
+        read_interface #(18) rd_add_18_1_opA(clk);
+        read_interface #(18) rd_add_18_1_opB(clk);
+        write_interface #(18) wr_add_18_1_sum(clk);
         
         //add_18_2
-        read_interface #(18,FLUX) rd_add_18_2_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_2_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_2_sum(clk);
+        read_interface #(18) rd_add_18_2_opA(clk);
+        read_interface #(18) rd_add_18_2_opB(clk);
+        write_interface #(18) wr_add_18_2_sum(clk);
         
         //add_18_3
-        read_interface #(18,FLUX) rd_add_18_3_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_3_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_3_sum(clk);
+        read_interface #(18) rd_add_18_3_opA(clk);
+        read_interface #(18) rd_add_18_3_opB(clk);
+        write_interface #(18) wr_add_18_3_sum(clk);
         
         //add_18_4
-        read_interface #(18,FLUX) rd_add_18_4_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_4_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_4_sum(clk);
+        read_interface #(18) rd_add_18_4_opA(clk);
+        read_interface #(18) rd_add_18_4_opB(clk);
+        write_interface #(18) wr_add_18_4_sum(clk);
         
         //add_18_5
-        read_interface #(18,FLUX) rd_add_18_5_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_5_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_5_sum(clk);
+        read_interface #(18) rd_add_18_5_opA(clk);
+        read_interface #(18) rd_add_18_5_opB(clk);
+        write_interface #(18) wr_add_18_5_sum(clk);
         
         //add_18_6
-        read_interface #(18,FLUX) rd_add_18_6_opA(clk);
-        read_interface #(18,FLUX) rd_add_18_6_opB(clk);
-        write_interface #(18,FLUX) wr_add_18_6_sum(clk);
+        read_interface #(18) rd_add_18_6_opA(clk);
+        read_interface #(18) rd_add_18_6_opB(clk);
+        write_interface #(18) wr_add_18_6_sum(clk);
         
     //ADD_27 (x7)
     
         //add_27_0
-        read_interface #(27,FLUX) rd_add_27_0_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_0_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_0_sum(clk);
+        read_interface #(27) rd_add_27_0_opA(clk);
+        read_interface #(27) rd_add_27_0_opB(clk);
+        write_interface #(27) wr_add_27_0_sum(clk);
         
         //add_27_1
-        read_interface #(27,FLUX) rd_add_27_1_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_1_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_1_sum(clk);
+        read_interface #(27) rd_add_27_1_opA(clk);
+        read_interface #(27) rd_add_27_1_opB(clk);
+        write_interface #(27) wr_add_27_1_sum(clk);
         
         //add_27_2
-        read_interface #(27,FLUX) rd_add_27_2_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_2_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_2_sum(clk);
+        read_interface #(27) rd_add_27_2_opA(clk);
+        read_interface #(27) rd_add_27_2_opB(clk);
+        write_interface #(27) wr_add_27_2_sum(clk);
         
         //add_27_3
-        read_interface #(27,FLUX) rd_add_27_3_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_3_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_3_sum(clk);
+        read_interface #(27) rd_add_27_3_opA(clk);
+        read_interface #(27) rd_add_27_3_opB(clk);
+        write_interface #(27) wr_add_27_3_sum(clk);
         
         //add_27_4
-        read_interface #(27,FLUX) rd_add_27_4_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_4_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_4_sum(clk);
+        read_interface #(27) rd_add_27_4_opA(clk);
+        read_interface #(27) rd_add_27_4_opB(clk);
+        write_interface #(27) wr_add_27_4_sum(clk);
         
         //add_27_5
-        read_interface #(27,FLUX) rd_add_27_5_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_5_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_5_sum(clk);
+        read_interface #(27) rd_add_27_5_opA(clk);
+        read_interface #(27) rd_add_27_5_opB(clk);
+        write_interface #(27) wr_add_27_5_sum(clk);
         
         //add_27_6
-        read_interface #(27,FLUX) rd_add_27_6_opA(clk);
-        read_interface #(27,FLUX) rd_add_27_6_opB(clk);
-        write_interface #(27,FLUX) wr_add_27_6_sum(clk);
+        read_interface #(27) rd_add_27_6_opA(clk);
+        read_interface #(27) rd_add_27_6_opB(clk);
+        write_interface #(27) wr_add_27_6_sum(clk);
             
     //COEFF_LUMA (x2)
     
         //coeff_luma_h
-        read_interface #(3,FLUX) rd_coeff_luma_h_alpha(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c0(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c1(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c2(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c3(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c4(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c5(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c6(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_h_c7(clk);
+        read_interface #(3) rd_coeff_luma_h_alpha(clk);
+        write_interface #(9) wr_coeff_luma_h_c0(clk);
+        write_interface #(9) wr_coeff_luma_h_c1(clk);
+        write_interface #(9) wr_coeff_luma_h_c2(clk);
+        write_interface #(9) wr_coeff_luma_h_c3(clk);
+        write_interface #(9) wr_coeff_luma_h_c4(clk);
+        write_interface #(9) wr_coeff_luma_h_c5(clk);
+        write_interface #(9) wr_coeff_luma_h_c6(clk);
+        write_interface #(9) wr_coeff_luma_h_c7(clk);
                     
         //coeff_luma_v
-        read_interface #(3,FLUX) rd_coeff_luma_v_alpha(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c0(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c1(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c2(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c3(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c4(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c5(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c6(clk);
-        write_interface #(9,FLUX) wr_coeff_luma_v_c7(clk);
+        read_interface #(3) rd_coeff_luma_v_alpha(clk);
+        write_interface #(9) wr_coeff_luma_v_c0(clk);
+        write_interface #(9) wr_coeff_luma_v_c1(clk);
+        write_interface #(9) wr_coeff_luma_v_c2(clk);
+        write_interface #(9) wr_coeff_luma_v_c3(clk);
+        write_interface #(9) wr_coeff_luma_v_c4(clk);
+        write_interface #(9) wr_coeff_luma_v_c5(clk);
+        write_interface #(9) wr_coeff_luma_v_c6(clk);
+        write_interface #(9) wr_coeff_luma_v_c7(clk);
     
     //DERIVE REAL SIZE (x1)
         
         //derive_real_size
-        read_interface #(7,FLUX) rd_derive_real_size_ext_size(clk);
-        write_interface #(7,FLUX) wr_derive_real_size_real_size(clk);
+        read_interface #(7) rd_derive_real_size_ext_size(clk);
+        write_interface #(7) wr_derive_real_size_real_size(clk);
             
     //REMOVE H (x1)
     
         //remove_h
-        read_interface #(7,FLUX) rd_remove_h_ext_size(clk);
-        read_interface #(18,FLUX) rd_remove_h_in_pel(clk);    
-        write_interface #(18,FLUX) wr_remove_h_out_pel(clk);
+        read_interface #(7) rd_remove_h_ext_size(clk);
+        read_interface #(18) rd_remove_h_in_pel(clk);    
+        write_interface #(18) wr_remove_h_out_pel(clk);
                 
     //CLIP (x1)
     
         //clip
-        read_interface #(16,FLUX) rd_clip_in_pel(clk);
-        write_interface #(8,FLUX) wr_clip_out_pel(clk);    
+        read_interface #(16) rd_clip_in_pel(clk);
+        write_interface #(8) wr_clip_out_pel(clk);    
 
         assign wr_clip_out_pel.full=write_port_out_port.full;
         assign write_port_out_port.write = wr_clip_out_pel.write;
@@ -317,8 +316,8 @@ module top_mono_mulfwd
     //SHIFT (x1)
     
         //shift
-        read_interface #(27,FLUX) rd_shift_in_pel(clk);
-        write_interface #(16,FLUX) wr_shift_out_pel(clk);
+        read_interface #(27) rd_shift_in_pel(clk);
+        write_interface #(16) wr_shift_out_pel(clk);
 
 
 //FORK SUPPPORT INTERFACES
@@ -326,8 +325,8 @@ module top_mono_mulfwd
     //FORK DELAY_0 - MUL9_0 ON INPORT
     
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_0_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_0_opA(clk);      
+        write_interface #(8) wr_fifo_delay_0_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_0_opA(clk);      
                   
         // - FULL
         assign write_port_in_port.full = wr_fifo_delay_0_in_pel.full | wr_fifo_mul_9_0_opA.full;
@@ -343,8 +342,8 @@ module top_mono_mulfwd
     //FORK DELAY_1 - MUL9_1 ON DELAY_0
     
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_1_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_1_opA(clk);   
+        write_interface #(8) wr_fifo_delay_1_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_1_opA(clk);   
              
         // - FULL
         assign wr_delay_0_out_pel.full = wr_fifo_delay_1_in_pel.full | wr_fifo_mul_9_1_opA.full;
@@ -360,8 +359,8 @@ module top_mono_mulfwd
     //FORK DELAY_2 - MUL9_2 ON DELAY_1       	
     	
     	// - INTERFACES
-        write_interface #(8,FLUX) wr_fifo_delay_2_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_2_opA(clk);     
+        write_interface #(8) wr_fifo_delay_2_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_2_opA(clk);     
            
         // - FULL
         assign wr_delay_1_out_pel.full = wr_fifo_delay_2_in_pel.full | wr_fifo_mul_9_2_opA.full;
@@ -377,8 +376,8 @@ module top_mono_mulfwd
     //FORK DELAY_3 - MUL9_3 ON DELAY_2
         
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_3_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_3_opA(clk); 
+        write_interface #(8) wr_fifo_delay_3_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_3_opA(clk); 
                
         // - FULL
         assign wr_delay_2_out_pel.full = wr_fifo_delay_3_in_pel.full | wr_fifo_mul_9_3_opA.full;
@@ -394,8 +393,8 @@ module top_mono_mulfwd
     //FORK DELAY_4 - MUL9_4 ON DELAY_3
         
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_4_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_4_opA(clk);   
+        write_interface #(8) wr_fifo_delay_4_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_4_opA(clk);   
              
         // - FULL
         assign wr_delay_3_out_pel.full = wr_fifo_delay_4_in_pel.full | wr_fifo_mul_9_4_opA.full;
@@ -411,8 +410,8 @@ module top_mono_mulfwd
     //FORK DELAY_5 - MUL9_5 ON DELAY_4
         
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_5_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_5_opA(clk); 
+        write_interface #(8) wr_fifo_delay_5_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_5_opA(clk); 
                
         // - FULL
         assign wr_delay_4_out_pel.full = wr_fifo_delay_5_in_pel.full | wr_fifo_mul_9_5_opA.full;
@@ -428,8 +427,8 @@ module top_mono_mulfwd
     //FORK DELAY_6 - MUL9_6 ON DELAY_5
         
         // - INTERFACES   		
-        write_interface #(8,FLUX) wr_fifo_delay_6_in_pel(clk);    		
-        write_interface #(8,FLUX) wr_fifo_mul_9_6_opA(clk);
+        write_interface #(8) wr_fifo_delay_6_in_pel(clk);    		
+        write_interface #(8) wr_fifo_mul_9_6_opA(clk);
                 
         // - FULL
         assign wr_delay_5_out_pel.full = wr_fifo_delay_6_in_pel.full | wr_fifo_mul_9_6_opA.full;
@@ -451,32 +450,32 @@ module top_mono_mulfwd
         // - INTERFACES
         
             //MUL9 (x8)
-            write_interface #(7,FLUX) wr_fifo_mul_9_0_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_1_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_2_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_3_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_4_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_5_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_6_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_9_7_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_0_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_1_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_2_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_3_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_4_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_5_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_6_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_9_7_ext_size (clk);
             
             //REMOVE H (x1)
-            write_interface #(7,FLUX) wr_fifo_remove_h_ext_size (clk);
+            write_interface #(7) wr_fifo_remove_h_ext_size (clk);
             
             //MUL_AND_FWD_18 (x7)
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_0_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_1_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_2_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_3_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_4_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_5_ext_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_6_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_0_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_1_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_2_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_3_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_4_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_5_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_6_ext_size (clk);
             
             //MUL_18 (x1)
-            write_interface #(7,FLUX) wr_fifo_mul_18_0_ext_size (clk);
+            write_interface #(7) wr_fifo_mul_18_0_ext_size (clk);
                                                                         
             //DERIVE REAL SIZE (x1)
-            write_interface #(7,FLUX) wr_fifo_derive_real_size_ext_size (clk);
+            write_interface #(7) wr_fifo_derive_real_size_ext_size (clk);
                         
         // - FULL            
             assign write_port_ext_size.full =
@@ -576,16 +575,16 @@ module top_mono_mulfwd
         // - INTERFACES
             
             //MUL_AND_FWD18 (x7)
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_0_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_1_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_2_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_3_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_4_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_5_real_size (clk);
-            write_interface #(7,FLUX) wr_fifo_mul_and_fwd_18_6_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_0_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_1_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_2_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_3_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_4_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_5_real_size (clk);
+            write_interface #(7) wr_fifo_mul_and_fwd_18_6_real_size (clk);
             
             //MUL18 (x1)
-            write_interface #(7,FLUX) wr_fifo_mul_18_0_real_size (clk);
+            write_interface #(7) wr_fifo_mul_18_0_real_size (clk);
                                                                                               
         // - FULL            
             assign wr_derive_real_size_real_size.full =
@@ -1113,7 +1112,7 @@ module top_mono_mulfwd
     //DELAY (x7); I: ORANGE - O: ORANGE / DARK YELLOW
      
         //delay0
-        delay #(FLUX) delay_0 
+        delay  delay_0 
         (
         .clk(clk),
         .rst(rst),
@@ -1122,7 +1121,7 @@ module top_mono_mulfwd
         );
          
         //delay1 
-        delay #(FLUX) delay_1 
+        delay  delay_1 
         (
         .clk(clk),
         .rst(rst),
@@ -1131,7 +1130,7 @@ module top_mono_mulfwd
         );    
         
         //delay2
-        delay #(FLUX) delay_2 
+        delay  delay_2 
         (
         .clk(clk),
         .rst(rst),
@@ -1140,7 +1139,7 @@ module top_mono_mulfwd
         );
          
         //delay3 
-        delay #(FLUX) delay_3 
+        delay  delay_3 
         (
         .clk(clk),
         .rst(rst),
@@ -1149,7 +1148,7 @@ module top_mono_mulfwd
         );    
     
         //delay4
-        delay #(FLUX) delay_4 
+        delay  delay_4 
         (
         .clk(clk),
         .rst(rst),
@@ -1158,7 +1157,7 @@ module top_mono_mulfwd
         );
          
         //delay5 
-        delay #(FLUX) delay_5 
+        delay  delay_5 
         (
         .clk(clk),
         .rst(rst),
@@ -1167,7 +1166,7 @@ module top_mono_mulfwd
         );    
     
         //delay6 
-        delay #(FLUX) delay_6 
+        delay  delay_6 
         (
         .clk(clk),
         .rst(rst),
@@ -1178,7 +1177,7 @@ module top_mono_mulfwd
     //COEFF_LUMA_H (x1); I: BLACK - O: BEIGE
     
         //coeff_luma_h
-        coeff_luma #(FLUX) coeff_luma_h 
+        coeff_luma  coeff_luma_h 
         (
         .read_port_alpha(rd_coeff_luma_h_alpha.actor),
         .write_port_c0(wr_coeff_luma_h_c0.actor),
@@ -1194,7 +1193,7 @@ module top_mono_mulfwd
         //COEFF_LUMA_V (x1); I: BLACK - O: GREEN (2°HALF)
         
         //coeff_luma_v
-        coeff_luma #(FLUX) coeff_luma_v 
+        coeff_luma  coeff_luma_v 
         (
         .read_port_alpha(rd_coeff_luma_v_alpha.actor),
         .write_port_c0(wr_coeff_luma_v_c0.actor),
@@ -1210,7 +1209,7 @@ module top_mono_mulfwd
     //ADD18 (x7); I: BORDEAUX/GREEN - O: GREEN / YELLOW
     
         //add18_0
-        add_18 #(FLUX) add18_0
+        add_18  add18_0
         (
         .read_port_opA(rd_add_18_0_opA.actor),
         .read_port_opB(rd_add_18_0_opB.actor),    
@@ -1218,7 +1217,7 @@ module top_mono_mulfwd
         );
     
         //add18_1 
-        add_18 #(FLUX) add18_1 
+        add_18  add18_1 
         (
         .read_port_opA(rd_add_18_1_opA.actor),
         .read_port_opB(rd_add_18_1_opB.actor),    
@@ -1226,7 +1225,7 @@ module top_mono_mulfwd
         );
     
         //add18_2
-        add_18 #(FLUX) add18_2 
+        add_18  add18_2 
         (
         .read_port_opA(rd_add_18_2_opA.actor),
         .read_port_opB(rd_add_18_2_opB.actor),    
@@ -1234,7 +1233,7 @@ module top_mono_mulfwd
         );
     
         //add18_3
-        add_18 #(FLUX) add18_3
+        add_18  add18_3
         (
         .read_port_opA(rd_add_18_3_opA.actor),
         .read_port_opB(rd_add_18_3_opB.actor),    
@@ -1242,7 +1241,7 @@ module top_mono_mulfwd
         );
         
         //add18_4 
-        add_18 #(FLUX) add18_4 
+        add_18  add18_4 
         (
         .read_port_opA(rd_add_18_4_opA.actor),
         .read_port_opB(rd_add_18_4_opB.actor),    
@@ -1250,7 +1249,7 @@ module top_mono_mulfwd
         );
     
         //add18_5 
-        add_18 #(FLUX) add18_5 
+        add_18  add18_5 
         (
         .read_port_opA(rd_add_18_5_opA.actor),
         .read_port_opB(rd_add_18_5_opB.actor),    
@@ -1258,7 +1257,7 @@ module top_mono_mulfwd
         );
         
         //add18_6
-        add_18 #(FLUX) add18_6
+        add_18  add18_6
         (
         .read_port_opA(rd_add_18_6_opA.actor),
         .read_port_opB(rd_add_18_6_opB.actor),    
@@ -1268,7 +1267,7 @@ module top_mono_mulfwd
     //MUL9 (x8); I: DARK YELLOW/RED/BEIGE - O: BORDEAUX / GREEN
     
         //mul9_0
-        mul_9 #(FLUX) mul9_0
+        mul_9  mul9_0
         (
         .clk(clk),
         .rst(rst),
@@ -1279,7 +1278,7 @@ module top_mono_mulfwd
         );
     
         //mul9_1
-        mul_9 #(FLUX) mul9_1
+        mul_9  mul9_1
         (
         .clk(clk),
         .rst(rst),
@@ -1290,7 +1289,7 @@ module top_mono_mulfwd
         );
     
         //mul9_2
-        mul_9 #(FLUX) mul9_2
+        mul_9  mul9_2
         (
         .clk(clk),
         .rst(rst),
@@ -1301,7 +1300,7 @@ module top_mono_mulfwd
         );
     
         //mul9_3
-        mul_9 #(FLUX) mul9_3
+        mul_9  mul9_3
         (
         .clk(clk),
         .rst(rst),
@@ -1312,7 +1311,7 @@ module top_mono_mulfwd
         );
     
         //mul9_4
-        mul_9 #(FLUX) mul9_4
+        mul_9  mul9_4
         (
         .clk(clk),
         .rst(rst),
@@ -1323,7 +1322,7 @@ module top_mono_mulfwd
         );
     
         //mul9_5
-        mul_9 #(FLUX) mul9_5
+        mul_9  mul9_5
         (
         .clk(clk),
         .rst(rst),
@@ -1334,7 +1333,7 @@ module top_mono_mulfwd
         );
     
         //mul9_6
-        mul_9 #(FLUX) mul9_6
+        mul_9  mul9_6
         (
         .clk(clk),
         .rst(rst),
@@ -1345,7 +1344,7 @@ module top_mono_mulfwd
         );
     
         //mul9_7
-        mul_9 #(FLUX) mul9_7
+        mul_9  mul9_7
         (
         .clk(clk),
         .rst(rst),
@@ -1358,7 +1357,7 @@ module top_mono_mulfwd
     //REMOVE_H (x1); I: LIME/YELLOW - O: DARK GREY (2°HALF) / RED (2°HALF)
 
         //remove_h
-        remove_h #(FLUX) remove_h
+        remove_h  remove_h
         (
         .clk(clk),
         .rst(rst),
@@ -1370,7 +1369,7 @@ module top_mono_mulfwd
     //DERIVE (x1); I: LIGHT BLUE - O: LIME (2°HALF) / BROWN (2°HALF) / ORANGE (2°HALF)
 
         //derive_real_size
-        derive_real_size #(FLUX) derive_real_size
+        derive_real_size  derive_real_size
         (
         .read_port_ext_size(rd_derive_real_size_ext_size.actor),       
         .write_port_real_size(wr_derive_real_size_real_size.actor)        
@@ -1838,7 +1837,7 @@ module top_mono_mulfwd
     //MUL_AND_FWD (x7); I: ORANGE (1°HALF) / LIGHT GREY (1°HALF) / GREEN (1°HALF) / DARK GREY (1°-2° HALF) - O: BORDEAUX / DARK YELLOW
 
         //mul_and_fwd_18_0
-        mul_and_fwd #(FLUX) mul_and_fwd_18_0
+        mul_and_fwd  mul_and_fwd_18_0
         (
         .clk(clk),
         .rst(rst),
@@ -1851,7 +1850,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_1
-        mul_and_fwd #(FLUX) mul_and_fwd_18_1
+        mul_and_fwd  mul_and_fwd_18_1
         (
         .clk(clk),
         .rst(rst),
@@ -1864,7 +1863,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_2
-        mul_and_fwd #(FLUX) mul_and_fwd_18_2
+        mul_and_fwd  mul_and_fwd_18_2
         (
         .clk(clk),
         .rst(rst),
@@ -1877,7 +1876,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_3
-        mul_and_fwd #(FLUX) mul_and_fwd_18_3
+        mul_and_fwd  mul_and_fwd_18_3
         (
         .clk(clk),
         .rst(rst),
@@ -1890,7 +1889,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_4
-        mul_and_fwd #(FLUX) mul_and_fwd_18_4
+        mul_and_fwd  mul_and_fwd_18_4
         (
         .clk(clk),
         .rst(rst),
@@ -1903,7 +1902,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_5
-        mul_and_fwd #(FLUX) mul_and_fwd_18_5
+        mul_and_fwd  mul_and_fwd_18_5
         (
         .clk(clk),
         .rst(rst),
@@ -1916,7 +1915,7 @@ module top_mono_mulfwd
         );
         
         //mul_and_fwd_18_6
-        mul_and_fwd #(FLUX) mul_and_fwd_18_6
+        mul_and_fwd  mul_and_fwd_18_6
         (
         .clk(clk),
         .rst(rst),
@@ -1931,7 +1930,7 @@ module top_mono_mulfwd
     //MUL_18 (x1); I: ORANGE (1°HALF) / LIGHT GREY (1°HALF) / GREEN (1°HALF) / DARK GREY (1°-2° HALF) - O: BORDEAUX / DARK YELLOW        
         
         //mul18_0
-        mul_18 #(FLUX) mul18_0
+        mul_18  mul18_0
         (
         .clk(clk),
         .rst(rst),
@@ -1945,7 +1944,7 @@ module top_mono_mulfwd
     //ADD27 (x7); I: BORDEAUX / DARK YELLOW - O: DARK YELLOW / VIOLET
 
         //add27_0
-        add_27 #(FLUX) add27_0
+        add_27  add27_0
         (
         .read_port_opA(rd_add_27_0_opA.actor),
         .read_port_opB(rd_add_27_0_opB.actor),    
@@ -1953,7 +1952,7 @@ module top_mono_mulfwd
         );
     
         //add27_1 
-        add_27 #(FLUX) add27_1 
+        add_27  add27_1 
         (
         .read_port_opA(rd_add_27_1_opA.actor),
         .read_port_opB(rd_add_27_1_opB.actor),    
@@ -1961,7 +1960,7 @@ module top_mono_mulfwd
         );
     
         //add27_2
-        add_27 #(FLUX) add27_2 
+        add_27  add27_2 
         (
         .read_port_opA(rd_add_27_2_opA.actor),
         .read_port_opB(rd_add_27_2_opB.actor),    
@@ -1969,7 +1968,7 @@ module top_mono_mulfwd
         );
     
         //add27_3
-        add_27 #(FLUX) add27_3
+        add_27  add27_3
         (
         .read_port_opA(rd_add_27_3_opA.actor),
         .read_port_opB(rd_add_27_3_opB.actor),    
@@ -1977,7 +1976,7 @@ module top_mono_mulfwd
         );
         
         //add27_4 
-        add_27 #(FLUX) add27_4 
+        add_27  add27_4 
         (
         .read_port_opA(rd_add_27_4_opA.actor),
         .read_port_opB(rd_add_27_4_opB.actor),    
@@ -1985,7 +1984,7 @@ module top_mono_mulfwd
         );
     
         //add27_5 
-        add_27 #(FLUX) add27_5 
+        add_27  add27_5 
         (
         .read_port_opA(rd_add_27_5_opA.actor),
         .read_port_opB(rd_add_27_5_opB.actor),    
@@ -1993,7 +1992,7 @@ module top_mono_mulfwd
         );
         
         //add27_6
-        add_27 #(FLUX) add27_6
+        add_27  add27_6
         (
         .read_port_opA(rd_add_27_6_opA.actor),
         .read_port_opB(rd_add_27_6_opB.actor),    
@@ -2003,7 +2002,7 @@ module top_mono_mulfwd
     //SHIFT (x1); I: VIOLET - O: FUCSIA
     
         //shift 
-        shift #(FLUX) shift
+        shift  shift
         (
         .read_port_in_pel(rd_shift_in_pel.actor),    
         .write_port_out_pel(wr_shift_out_pel.actor)        
@@ -2012,7 +2011,7 @@ module top_mono_mulfwd
     //CLIP (x1); I: FUCSIA - O: PINK
 
         //clip 
-        clip #(FLUX) clip
+        clip  clip
         (
         .read_port_in_pel(rd_clip_in_pel.actor),    
         .write_port_out_pel(wr_clip_out_pel.actor)        
