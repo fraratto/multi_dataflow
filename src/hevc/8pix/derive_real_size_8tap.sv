@@ -24,7 +24,7 @@ module derive_real_size#
     //local parameters
     parameter DATA_WIDTH=7;   
     parameter WIDTH=DATA_WIDTH+TAG_WIDTH;
-    parameter DIFF=7;
+    parameter DIFF=8;
     
     //common combinatory elements
     logic eqv_read;                                     //read signal                        
