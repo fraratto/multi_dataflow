@@ -1,8 +1,8 @@
 //COMPLETED AND TESTED
 
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
-`include "ram_interface.sv"
+`include "../../fifo/fifo_interface.sv"
+`include "../../fifo/ram_interface.sv"
 
 module line_buffer#
 (

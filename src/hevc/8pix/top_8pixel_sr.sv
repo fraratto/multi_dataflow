@@ -6,7 +6,7 @@
 //
 // ----------------------------------------------------------------------------
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../../fifo/fifo_interface.sv"
 
 
 module top_8pixel_sr 

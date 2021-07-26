@@ -6,7 +6,7 @@
 //
 // ----------------------------------------------------------------------------
 `timescale 1ns / 1ps
-`include "fifo_interface.sv"
+`include "../../fifo/fifo_interface.sv"
 //RICORDA DI DECOMMENTARE MONO NEI MODULI (ATTORI E INTERFACCIA) ALTRIMENTI IL SISTEMA FUNZIONA COL TAG
 
 module top_mono_mulfwd 
