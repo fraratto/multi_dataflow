@@ -23,9 +23,6 @@ module delay#
 	parameter IDLE = 0;
 	parameter WORK = 1;
 	
-	// state
-	logic state [0 : FLUX-1];	// added a state in which data is initialized to 0 after reset
-
     //common combinatory elements
     logic eqv_read;                                     //read signal
 	
