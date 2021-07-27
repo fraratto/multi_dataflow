@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_seq
+module tb_seq;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------
