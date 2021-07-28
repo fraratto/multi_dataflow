@@ -17,7 +17,7 @@ module tb_con;
 	parameter IN_PORT_FILTER_8TAP_SIZE = (SIZE + TAP)*(SIZE + TAP) + TAP;
 	
 	parameter FLUX = 2;
-    parameter DEPTH = 16;
+    parameter DEPTH = 2;
     
 	parameter OUT_PORT_FILTER_8TAP_FILE = "output_16x16_v2_h2.mem";
 	parameter OUT_PORT_FILTER_8TAP_SIZE = SIZE*SIZE;
