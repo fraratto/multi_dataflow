@@ -193,6 +193,7 @@ module tb_con;
 		ext_size.din = {1'b0,ext_size_val};
 		ext_size.write = 1;
 		t_req[0] = $time;
+		t_req[1] = $time;
 		t_start[0] = $time;
 		
 		#(clk_PERIOD)
@@ -206,7 +207,6 @@ module tb_con;
 		ext_size_val = SIZE + TAP;
 		ext_size.din = {1'b1,ext_size_val};
 		ext_size.write = 1;
-		t_req[1] = $time;
 		t_start[1] = $time;
 		
 		#(clk_PERIOD)

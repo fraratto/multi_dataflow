@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 
 
-module tb_seq;
+module tb_blk;
 
 	// test bench parameters
 	// ----------------------------------------------------------------------------
@@ -17,10 +17,12 @@ module tb_seq;
 	parameter IN_PORT_FILTER_8TAP_SIZE = (SIZE + TAP)*(SIZE + TAP) + TAP;
 	
 	parameter FLUX = 2;
-    parameter DEPTH = 2;
+    parameter DEPTH = 16;
     
 	parameter OUT_PORT_FILTER_8TAP_FILE = "output_16x16_v2_h2.mem";
 	parameter OUT_PORT_FILTER_8TAP_SIZE = SIZE*SIZE;
+	
+	parameter BLOCK_SIZE = (SIZE + TAP); // One row
 	
 	// ----------------------------------------------------------------------------
 	
@@ -46,6 +48,8 @@ module tb_seq;
 	integer out_port6_i_1 = 6;
 	integer out_port7_i_0 = 7;
 	integer out_port7_i_1 = 7;
+	integer select_flow = 0;
+	integer cnt_elements = 0;
 	logic [6 : 0] ext_size_val;
 	logic [2 : 0] v_alpha_val;
 	logic [2 : 0] h_alpha_val;
@@ -174,7 +178,7 @@ module tb_seq;
 		out_pel_7.full = 2'b0;
 	
 		// initial rst
-		rst = 1;
+		rst = 0;
 		#2
 		rst = 1;
 		#100
@@ -192,7 +196,21 @@ module tb_seq;
 		ext_size.din = {1'b0,ext_size_val};
 		ext_size.write = 1;
 		t_req[0] = $time;
+		t_req[1] = $time;
 		t_start[0] = $time;
+		
+		#(clk_PERIOD)
+		// setup flow_1
+		v_alpha_val = V_ALPHA;
+		v_alpha.din = {1'b1,v_alpha_val};  
+		v_alpha.write = 1;
+		h_alpha_val = H_ALPHA;
+		h_alpha.din = {1'b1,h_alpha_val};
+		h_alpha.write = 1;
+		ext_size_val = SIZE + TAP;
+		ext_size.din = {1'b1,ext_size_val};
+		ext_size.write = 1;
+		t_start[1] = $time;
 		
 		#(clk_PERIOD)
 		v_alpha.din = 0;
@@ -202,11 +220,12 @@ module tb_seq;
 		ext_size.din = 0;
 		ext_size.write = 0;
 		
-		// feed flow_0
-		while(in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE)	
-			begin
+		// feed all the flows
+		while((in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE) || (in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE))
+		begin
 			#(clk_PERIOD)
-			if(!in_pel_0.full[0] & !in_pel_1.full[0] & !in_pel_1.full[0] & !in_pel_3.full[0] &
+				case(select_flow)
+		0:	if(!in_pel_0.full[0] & !in_pel_1.full[0] & !in_pel_1.full[0] & !in_pel_3.full[0] &
 				!in_pel_4.full[0] & !in_pel_5.full[0] & !in_pel_6.full[0] & !in_pel_7.full[0])
 				begin
 				in_pel_0.din = {1'b0,in_port_filter_8tap_file_data[in_port_i_0 + 0]};
@@ -238,49 +257,8 @@ module tb_seq;
 				in_pel_6.din = 0; in_pel_6.write  = 1'b0;
 				in_pel_7.din = 0; in_pel_7.write  = 1'b0;
 				end
-			end
-		#(clk_PERIOD)
-		in_pel_0.din = 0; in_pel_0.write  = 1'b0;
-		in_pel_1.din = 0; in_pel_1.write  = 1'b0;
-		in_pel_2.din = 0; in_pel_2.write  = 1'b0;
-		in_pel_3.din = 0; in_pel_3.write  = 1'b0;
-		in_pel_4.din = 0; in_pel_4.write  = 1'b0;
-		in_pel_5.din = 0; in_pel_5.write  = 1'b0;
-		in_pel_6.din = 0; in_pel_6.write  = 1'b0;
-		in_pel_7.din = 0; in_pel_7.write  = 1'b0;
-			
-		// wait flow_0 end
-		while(out_port0_i_0 < OUT_PORT_FILTER_8TAP_SIZE)
-			#(clk_PERIOD);				
-		
-		#(clk_PERIOD)
-		// setup flow_1
-		v_alpha_val = V_ALPHA;
-		v_alpha.din = {1'b1,v_alpha_val};  
-		v_alpha.write = 1;
-		h_alpha_val = H_ALPHA;
-		h_alpha.din = {1'b1,h_alpha_val};
-		h_alpha.write = 1;
-		ext_size_val = SIZE + TAP;
-		ext_size.din = {1'b1,ext_size_val};
-		ext_size.write = 1;
-		t_req[1] = $time;
-		t_start[1] = $time;
-		
-		#(clk_PERIOD)
-		v_alpha.din = 0;
-		v_alpha.write = 0;
-		h_alpha.din = 0;
-		h_alpha.write = 0;
-		ext_size.din = 0;
-		ext_size.write = 0;
-			
-		
-		// feed flow_1
-		while(in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE)	
-			begin
-			#(clk_PERIOD)
-			if(!in_pel_0.full[1] & !in_pel_1.full[1] & !in_pel_1.full[1] & !in_pel_3.full[1] &
+				
+		1:	if(!in_pel_0.full[1] & !in_pel_1.full[1] & !in_pel_1.full[1] & !in_pel_3.full[1] &
 				!in_pel_4.full[1] & !in_pel_5.full[1] & !in_pel_6.full[1] & !in_pel_7.full[1])
 				begin
 				in_pel_0.din = {1'b1,in_port_filter_8tap_file_data[in_port_i_1 + 0]};
@@ -312,6 +290,17 @@ module tb_seq;
 				in_pel_6.din = 0; in_pel_6.write  = 1'b0;
 				in_pel_7.din = 0; in_pel_7.write  = 1'b0;
 				end
+		default: begin
+				in_pel_0.din = 0; in_pel_0.write  = 1'b0;
+				in_pel_1.din = 0; in_pel_1.write  = 1'b0;
+				in_pel_2.din = 0; in_pel_2.write  = 1'b0;
+				in_pel_3.din = 0; in_pel_3.write  = 1'b0;
+				in_pel_4.din = 0; in_pel_4.write  = 1'b0;
+				in_pel_5.din = 0; in_pel_5.write  = 1'b0;
+				in_pel_6.din = 0; in_pel_6.write  = 1'b0;
+				in_pel_7.din = 0; in_pel_7.write  = 1'b0;
+				end	
+			endcase				
 			end
 		#(clk_PERIOD)
 		in_pel_0.din = 0; in_pel_0.write  = 1'b0;
@@ -323,10 +312,10 @@ module tb_seq;
 		in_pel_6.din = 0; in_pel_6.write  = 1'b0;
 		in_pel_7.din = 0; in_pel_7.write  = 1'b0;
 			
-		// wait flow_1 end
-		while(out_port0_i_1 < OUT_PORT_FILTER_8TAP_SIZE)
-			#(clk_PERIOD);				
-		
+		// wait all the flows to end
+		while((out_port0_i_0 < OUT_PORT_FILTER_8TAP_SIZE) || (out_port0_i_1 < OUT_PORT_FILTER_8TAP_SIZE))
+			#(clk_PERIOD);			
+	
 		#(clk_PERIOD)
 		$display("Flow 0 execution time:\t%f us", (t_end[0]-t_start[0]) / 1000.0);
 		$display("Flow 1 execution time:\t%f us", (t_end[1]-t_start[1]) / 1000.0);
@@ -340,6 +329,28 @@ module tb_seq;
 		
 		$stop;
 		end
+		
+	// ----------------------------------------------------------------------------
+	// select_flow managing
+	always @(posedge clk)
+	if(in_pel_0.write)	
+		if(cnt_elements < BLOCK_SIZE)
+			cnt_elements = cnt_elements + N_CHANNELS;
+		else
+			begin // each time a block is written it changes flow 
+			cnt_elements = 0;
+			case(select_flow)
+				0: if(in_port_i_1 < IN_PORT_FILTER_8TAP_SIZE)	// unless the other flow has completed
+					 select_flow = 1;
+					else
+					 select_flow = 0;
+				1: if(in_port_i_0 < IN_PORT_FILTER_8TAP_SIZE)
+					 select_flow = 0;
+					else
+					 select_flow = 1;
+				default: $error("Error on select_flow!");
+			endcase
+			end
 	// ----------------------------------------------------------------------------
 	// output of the horizontal filter
 	/*
