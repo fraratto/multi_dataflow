@@ -38,9 +38,9 @@ module fifo_sr#(
     logic [ADDR_WIDTH-1:0] Wpnxt;                       //next write pointer 
     logic [ADDR_WIDTH-1:0] Rp [0:FLUX-1];               //read_pointer for each flux
     logic [ADDR_WIDTH-1:0] Rpnxt [0:FLUX-1];            //next read pointer for each flux
-            
+                
     //loops
-    integer i,k,l,m,n,p,q,r,s,t,u;                      //needed for loops
+    integer i,k,l,m,n,p,q,r,t,u;                        //needed for loops
     genvar j;                                           //needed for output mux 
 
     //output choice function (reader is the name of the function)
@@ -55,7 +55,7 @@ module fifo_sr#(
         else
             reader = 0;    
     endfunction
-	
+
 	assign reader_id = reader(read_port.read);
 
 	// data_mem instantiation and connection
@@ -114,15 +114,18 @@ module fifo_sr#(
                 for(m=0;m<=DEPTH-1;m=m+1)
                         statusreg[m]<=0;
             end
-        else if(write_port.write==1 | |read_port.read==1)
+        else if(write_port.write==1 & |read_port.read==1)
             begin
-                if(write_port.write==1)
-                    statusreg[Wp]<=1;                
-                for(m=0;m<=FLUX-1;m=m+1)
-                    begin
-                        if(read_port.read[m]==1) 
-                            statusreg[Rp[m]]<=0;
-                    end
+                statusreg[Wp]<=1;        
+                statusreg[Rp[reader_id]]<=0;
+            end       
+        else if(write_port.write==1)
+            begin
+                statusreg[Wp]<=1;        
+            end            
+        else if(|read_port.read==1)
+            begin
+                statusreg[Rp[reader_id]]<=0;
             end                                                                                                                    
 
     //signals' update - Rpstory            
@@ -155,10 +158,8 @@ module fifo_sr#(
                         lastwrite[l]<=0;
             end                                 
         else if(write_port.write==1)  
-            begin
-                for(l=0;l<=FLUX-1;l=l+1)
-                    if(tag==l)                 
-                        lastwrite[l]<=Wp;                
+            begin          
+                lastwrite[tag]<=Wp;                
             end          
 
     //empty locations detector
@@ -186,10 +187,9 @@ module fifo_sr#(
 
     //next write pointer updates
     always_comb    
-        for(s=0;s<=FLUX-1;s=s+1)
             begin
-                if(read_port.read[s]==1 & (Rptot==DEPTH | (Rptot==DEPTH-1 & write_port.write==1) ) )  
-                   Wpnxt=Rp[s];
+                if(|read_port.read==1 & (Rptot==DEPTH | (Rptot==DEPTH-1 & write_port.write==1) ) )  
+                   Wpnxt=Rp[reader_id];
                 else if(Rptot<DEPTH-1 & write_port.write==1)  
                    Wpnxt=nextloc;
                 else 
